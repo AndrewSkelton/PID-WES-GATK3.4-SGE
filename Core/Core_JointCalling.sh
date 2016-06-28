@@ -21,23 +21,13 @@ SCRIPTS=${PROJ_BASE}/Scripts
 BUNDLE="/opt/databases/GATK_bundle/2.8/hg19"
 BASE_DIR="${PROJ_BASE}/SamplePreprocessing"
 DIR_OUT=${PROJ_BASE}/JointCalling/
-VERSION="2016MAY_4"
+VERSION="2016JUNE"
 LOG=${PROJ_BASE}JointCalling/${VERSION}/JointCalling.log
-CAP_KIT=${PROJ_BASE}/Capture_Kits/SS_V5_NRC_Merge/SS_V5_NRC_Merge.bed
+CAP_KIT=${PROJ_BASE}/Capture_Kits/Nextera_Rapid_Capture_Exome/nexterarapidcapture_exome_targetedregions.bed
 
 mkdir -p ${DIR_OUT}/${VERSION}/Raw_Callset
-
 echo "*** New Joint Calling Run ***" >> ${LOG}
 ##'-----------------------------------------------------------------------------------------#
-
-
-#while read i
-#do
-#   echo "Copying ${i}"
-#   cp ${i}/GATK/*.g.vcf* ./
-#done < ${DIR_OUT}/${VERSION}/Paths_in.txt
-
-
 
 
 
