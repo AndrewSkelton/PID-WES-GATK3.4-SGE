@@ -20,8 +20,9 @@ source ~/.bash_profile
 #  Input       : GATK Bundle Path                                                           |
 #  Input       : Capture Kit                                                                |
 #  Input       : Training Set - dbSNP                                                       |
+#  Input       : PADDING                                                                    |
 #  Resources   : Memory     - 25GB                                                          |
-#  Resources   : Processors - 1                                                            |
+#  Resources   : Processors - 1                                                             |
 #-------------------------------------------------------------------------------------------#
 
 
@@ -60,7 +61,7 @@ java -Xmx18g -jar \
         -R ${TMPDIR}/"ucsc.hg19.fasta" \
         -I ${TMPDIR}/${1}'_Clean_GATK.bam' \
         -L ${TMPDIR}/${CAP_KIT} \
-        --interval_padding 100 \
+        --interval_padding ${7} \
         --dbsnp ${TMPDIR}/${DBSNP} \
         --max_alternate_alleles 50 \
         --pcr_indel_model CONSERVATIVE \
@@ -72,7 +73,6 @@ java -Xmx18g -jar \
         -A VariantType \
         -A ClippingRankSumTest \
         -A DepthPerSampleHC \
-        -A InbreedingCoeff \
         -o ${TMPDIR}/${1}'.g.vcf'
 ##'-----------------------------------------------------------------------------------------#
 

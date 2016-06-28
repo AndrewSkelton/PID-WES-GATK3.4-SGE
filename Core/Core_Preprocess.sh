@@ -76,6 +76,8 @@ FORWARD_READS=$(basename "$FORWARD_READS")
 REVERSE_READS=`ls $i'/Raw_Data/'*R2*`
 REVERSE_READS=$(basename "$REVERSE_READS")
 RG='@RG\tID:'${BATCH}'\tSM:'${SAMPLE_ID}'\tPL:Illumina\tLB:Nextera\tPU:NextSeq'
+PADDING_TAR="${BASE_DIR}/Sample_${SAMPLE_ID}/Raw_Data/${SAMPLE_ID}_R1.fastq.gz"
+PADDING=$(zcat ${PADDING_TAR} | head -10000 | awk '{print length}' | sort -nr | head -1)
 ##'-----------------------------------------------------------------------------------------#
 
 ##'Create Log
@@ -155,7 +157,8 @@ if ! ls ${BASE_DIR}/Sample_${SAMPLE_ID}/Alignment/Clean/${SAMPLE_ID}_Clean_GATK.
               ${PHASE1INDELS} \
               ${DBSNP} \
               ${CAP_KIT} \
-              ${BUNDLE}
+              ${BUNDLE} \
+              ${PADDING}
     ##'---------------------------------------------------------------------------------------#
 
 ##'---------------------------------------------------------------------------------------#
@@ -168,15 +171,16 @@ fi
 ##' $2 - Path to Sample's preprocessing base
 ##'---------------------------------------------------------------------------------------#
 if ! ls ${i}/GATK/${SAMPLE_ID}.g.vcf 1> /dev/null 2>&1; then
-qsub -N "GATKgVCF_${SAMPLE_ID}" \
-        -hold_jid "GATKRecal_${SAMPLE_ID}" \
-          ${SCRIPTS}/Modules/Module_GATKgVCF.sh \
-          ${SAMPLE_ID} \
-          ${i} \
-          ${REF_FA} \
-          ${BUNDLE} \
-          ${CAP_KIT} \
-          ${DBSNP}
+  qsub -N "GATKgVCF_${SAMPLE_ID}" \
+          -hold_jid "GATKRecal_${SAMPLE_ID}" \
+            ${SCRIPTS}/Modules/Module_GATKgVCF.sh \
+            ${SAMPLE_ID} \
+            ${i} \
+            ${REF_FA} \
+            ${BUNDLE} \
+            ${CAP_KIT} \
+            ${DBSNP} \
+            ${PADDING}
 fi
 ##'---------------------------------------------------------------------------------------#
 

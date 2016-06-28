@@ -17,11 +17,11 @@
 ##'Set Base Directory and Capture Kits
 ##'-----------------------------------------------------------------------------------------#
 PROJ_BASE="/home/nas151/WORKING_DATA/Exome_Project/"
-SCRIPTS=${PROJ_BASE}/Scripts
 BUNDLE="/opt/databases/GATK_bundle/2.8/hg19"
-BASE_DIR="${PROJ_BASE}/SamplePreprocessing"
-DIR_OUT=${PROJ_BASE}/JointCalling/
 VERSION="2016JUNE"
+BASE_DIR="${PROJ_BASE}/Preprocessing"
+SCRIPTS=${PROJ_BASE}/Scripts
+DIR_OUT=${PROJ_BASE}/JointCalling/
 LOG=${PROJ_BASE}JointCalling/${VERSION}/JointCalling.log
 CAP_KIT=${PROJ_BASE}/Capture_Kits/Nextera_Rapid_Capture_Exome/nexterarapidcapture_exome_targetedregions.bed
 

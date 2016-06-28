@@ -23,6 +23,7 @@ source ~/.bash_profile
 #  Input       : Training Set - dbSNP                                                       |
 #  Input       : Capture Kit                                                                |
 #  Input       : GATK Bundle Path                                                           |
+#  Input       : PADDING                                                                    |
 #  Resources   : Memory     - 30GB                                                          |
 #  Resources   : Processors - 5                                                             |
 #-------------------------------------------------------------------------------------------#
@@ -62,7 +63,7 @@ java -Xmx25g -jar \
         -nt 5 \
         -R ${TMPDIR}/${REF_FA} \
         -L ${TMPDIR}/${CAP_KIT} \
-        --interval_padding 150 \
+        --interval_padding ${9} \
         -known ${TMPDIR}/${MILLS} \
         -known ${TMPDIR}/${PHASE1INDELS} \
         -I ${TMPDIR}/${1}*_Marked.bam \
@@ -94,7 +95,7 @@ java -Xmx25g -jar \
         -nct 5 \
         -R ${TMPDIR}/${REF_FA} \
         -L ${TMPDIR}/${CAP_KIT} \
-        --interval_padding 150 \
+        --interval_padding ${9} \
         -knownSites ${TMPDIR}/${MILLS} \
         -knownSites ${TMPDIR}/${PHASE1INDELS} \
         -knownSites ${TMPDIR}/${DBSNP} \
@@ -110,7 +111,7 @@ java -Xmx25g -jar \
         -nct 5 \
         -R ${TMPDIR}/${REF_FA} \
         -L ${TMPDIR}/${CAP_KIT} \
-        --interval_padding 100 \
+        --interval_padding ${9} \
         -BQSR ${TMPDIR}/recal_data.table \
         -I ${TMPDIR}/${1}_Realigned.bam \
         -o ${TMPDIR}/${1}_Clean_GATK.bam
