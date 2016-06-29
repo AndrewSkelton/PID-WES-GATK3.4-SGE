@@ -1,7 +1,7 @@
 #!/bin/bash
 #$ -cwd -V
 #$ -pe smp 1
-#$ -l h_vmem=5G
+#$ -l h_vmem=50G
 #$ -e ~/log
 #$ -o ~/log
 
@@ -17,14 +17,15 @@ source ~/.bash_profile
 #  Input       : Sample ID                                                                  |
 #  Input       : Path to Sample's preprocessing base                                        |
 #  Input       : Capture Kit                                                                |
-#  Resources   : Memory     - 5GB                                                          |
+#  Resources   : Memory     - 5GB                                                           |
 #  Resources   : Processors - 5                                                             |
 #-------------------------------------------------------------------------------------------#
 
 
 ##'Add Modules
 ##'-----------------------------------------------------------------------------------------#
-module add apps/bedtools/2.25
+module add apps/bedtools/2.20.1
+module add apps/samtools/1.3
 ##'-----------------------------------------------------------------------------------------#
 
 
@@ -38,9 +39,16 @@ cp ${3} ${TMPDIR}
 ##'Subset Capture Kit for X and Y
 ##'-----------------------------------------------------------------------------------------#
 CAPKIT=$(basename "$3")
-touch ${TMPDIR}/CapKitTmp.bed
-grep "chrX" ${TMPDIR}/${CAPKIT} >> ${TMPDIR}/CapKitTmp.bed
-grep "chrY" ${TMPDIR}/${CAPKIT} >> ${TMPDIR}/CapKitTmp.bed
+grep "chrX" ${TMPDIR}/${CAPKIT} > ${TMPDIR}/CapKitTmpX.bed
+grep "chrY" ${TMPDIR}/${CAPKIT} > ${TMPDIR}/CapKitTmpY.bed
+ls -lh ${TMPDIR}
+##'-----------------------------------------------------------------------------------------#
+
+
+##'Subset Bam
+##'-----------------------------------------------------------------------------------------#
+samtools view ${TMPDIR}/${1}_Clean_GATK.bam chrX -b > ${TMPDIR}/${1}_ChrX.bam
+samtools view ${TMPDIR}/${1}_Clean_GATK.bam chrY -b > ${TMPDIR}/${1}_ChrY.bam
 ##'-----------------------------------------------------------------------------------------#
 
 
@@ -48,13 +56,18 @@ grep "chrY" ${TMPDIR}/${CAPKIT} >> ${TMPDIR}/CapKitTmp.bed
 ##'-----------------------------------------------------------------------------------------#
 bedtools coverage \
          -hist \
-         -a ${TMPDIR}/CapKitTmp.bed  \
-         -b ${TMPDIR}/${1}_Clean_GATK.bam > ${TMPDIR}/${1}_Gender.cov
+         -a ${TMPDIR}/CapKitTmpX.bed  \
+         -b ${TMPDIR}/${1}_ChrX.bam > ${TMPDIR}/${1}_Gender_ChrX.cov
+
+bedtools coverage \
+        -hist \
+        -a ${TMPDIR}/CapKitTmpY.bed  \
+        -b ${TMPDIR}/${1}_ChrY.bam > ${TMPDIR}/${1}_Gender_ChrY.cov
 ##'-----------------------------------------------------------------------------------------#
 
 
 ##'Make Directory Structure and Copy Results back to Lustre
 ##'-----------------------------------------------------------------------------------------#
 mkdir -p ${2}/Checks/
-mv ${TMPDIR}/${1}_Gender.cov ${2}/Checks/
+mv ${TMPDIR}/${1}_Gender_Chr*.cov ${2}/Checks/
 ##'-----------------------------------------------------------------------------------------#
