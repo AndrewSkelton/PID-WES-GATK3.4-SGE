@@ -170,17 +170,32 @@ fi
 ##' $1 - Sample ID
 ##' $2 - Path to Sample's preprocessing base
 ##'---------------------------------------------------------------------------------------#
-if ! ls ${i}/GATK/${SAMPLE_ID}.g.vcf 1> /dev/null 2>&1; then
-  qsub -N "GATKgVCF_${SAMPLE_ID}" \
+# if ! ls ${i}/GATK/${SAMPLE_ID}.g.vcf 1> /dev/null 2>&1; then
+#   qsub -N "GATKgVCF_${SAMPLE_ID}" \
+#           -hold_jid "GATKRecal_${SAMPLE_ID}" \
+#             ${SCRIPTS}/Modules/Module_GATKgVCF.sh \
+#             ${SAMPLE_ID} \
+#             ${i} \
+#             ${REF_FA} \
+#             ${BUNDLE} \
+#             ${CAP_KIT} \
+#             ${DBSNP} \
+#             ${PADDING}
+# fi
+##'---------------------------------------------------------------------------------------#
+
+
+##'Get Gender coverage from Capture Kits
+##' $1 - Sample ID
+##' $2 - Path to Sample's preprocessing base
+##'---------------------------------------------------------------------------------------#
+if ! ls ${i}/Checks/${SAMPLE_ID}_Gender.cov 1> /dev/null 2>&1; then
+  qsub -N "GenderCov_${SAMPLE_ID}" \
           -hold_jid "GATKRecal_${SAMPLE_ID}" \
-            ${SCRIPTS}/Modules/Module_GATKgVCF.sh \
+            ${SCRIPTS}/Modules/Module_GenderCov.sh \
             ${SAMPLE_ID} \
             ${i} \
-            ${REF_FA} \
-            ${BUNDLE} \
-            ${CAP_KIT} \
-            ${DBSNP} \
-            ${PADDING}
+            ${CAP_KIT}
 fi
 ##'---------------------------------------------------------------------------------------#
 
