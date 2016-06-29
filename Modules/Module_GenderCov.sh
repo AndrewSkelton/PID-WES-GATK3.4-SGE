@@ -39,8 +39,8 @@ cp ${3} ${TMPDIR}
 ##'-----------------------------------------------------------------------------------------#
 CAPKIT=$(basename "$3")
 touch ${TMPDIR}/CapKitTmp.bed
-grep "chrX" ${CAPKIT} >> ${TMPDIR}/CapKitTmp.bed
-grep "chrY" ${CAPKIT} >> ${TMPDIR}/CapKitTmp.bed
+grep "chrX" ${TMPDIR}/${CAPKIT} >> ${TMPDIR}/CapKitTmp.bed
+grep "chrY" ${TMPDIR}/${CAPKIT} >> ${TMPDIR}/CapKitTmp.bed
 ##'-----------------------------------------------------------------------------------------#
 
 
