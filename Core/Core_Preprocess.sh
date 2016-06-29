@@ -103,13 +103,13 @@ if ! ls ${BASE_DIR}/Sample_${SAMPLE_ID}/Alignment/Clean/${SAMPLE_ID}_Clean_GATK.
     ##' $3 - Path to Fastq Files
     ##' $4 - Stage
     ##'-----------------------------------------------------------------------------------------#
-    qsub -N "Fastqc_${SAMPLE_ID}" \
-            -hold_jid "FastqSort_${SAMPLE_ID}" \
-              ${SCRIPTS}/Modules/Module_Fastqc.sh \
-              ${SAMPLE_ID} \
-              ${i} \
-              ${i}/Raw_Data \
-              "Raw_Data"
+    # qsub -N "Fastqc_${SAMPLE_ID}" \
+    #         -hold_jid "FastqSort_${SAMPLE_ID}" \
+    #           ${SCRIPTS}/Modules/Module_Fastqc.sh \
+    #           ${SAMPLE_ID} \
+    #           ${i} \
+    #           ${i}/Raw_Data \
+    #           "Raw_Data"
     ##'-----------------------------------------------------------------------------------------#
 
 

@@ -19,7 +19,7 @@
 PROJ_BASE="/home/nas151/WORKING_DATA/Exome_Project/"
 BUNDLE="/opt/databases/GATK_bundle/2.8/hg19"
 VERSION="2016JUNE"
-BASE_DIR="${PROJ_BASE}/Preprocessing"
+BASE_DIR="${PROJ_BASE}/Preprocessing/"
 SCRIPTS=${PROJ_BASE}/Scripts
 DIR_OUT=${PROJ_BASE}/JointCalling/
 LOG=${PROJ_BASE}JointCalling/${VERSION}/JointCalling.log
@@ -47,14 +47,25 @@ REF_FA=${BUNDLE}/ucsc.hg19.fasta
 
 ##'Build File Path Index
 ##'---------------------------------------------------------------------------------------#
-# while read lineB
-# do
-#   SAM_ID=$(echo "${lineB}" | cut -f 2)
-#   SAM_PATH=`find ${BASE_DIR} -type d -name "Sample_${SAM_ID}"`
-#   SAM_PATH_ARRAY+=(${SAM_PATH})
-# done < ${PROJ_BASE}Scripts/RefFiles/Samples2.ped
-# CAP_KIT_IN=${PROJ_BASE}/Capture_Kits/SS_V5_NRC_Merge/SS_V5_NRC_Merge.bed
-# printf "%s\n" "${SAM_PATH_ARRAY[@]}" > ${DIR_OUT}/${VERSION}/Paths_in.txt
+PADDING_MIN=0
+while read lineB
+do
+  SAM_ID=$(echo "${lineB}" | cut -f 2)
+  SAM_PATH=`find ${BASE_DIR} -type d -name "Sample_${SAM_ID}"`
+  SAM_PATH_ARRAY+=(${SAM_PATH})
+
+  PADDING_TAR="${SAM_PATH}/Raw_Data/${SAMPLE_ID}_R1.fastq.gz"
+  PADDING_TMP=$(zcat ${PADDING_TAR} | head -10000 | awk '{print length}' | sort -nr | head -1)
+  if [ $PADDING_MIN -eq 0 ]; then
+    PADDING_MIN=$PADDING_TMP
+  else
+    if (( PADDING_TMP < PADDING_MIN )); then; then
+      PADDING_MIN=$PADDING_TMP
+    fi
+  fi
+done < ${PROJ_BASE}Scripts/RefFiles/Samples.ped
+CAP_KIT_IN=${PROJ_BASE}/Capture_Kits/SS_V5_NRC_Merge/SS_V5_NRC_Merge.bed
+printf "%s\n" "${SAM_PATH_ARRAY[@]}" > ${DIR_OUT}/${VERSION}/Paths_in.txt
 ##'---------------------------------------------------------------------------------------#
 
 
@@ -73,7 +84,8 @@ qsub -N "GATK_Joint_Calling_${VERSION}" \
         ${DIR_OUT}/${VERSION}/Raw_Callset \
         ${PROJ_BASE}Scripts/RefFiles/Samples.ped \
         ${LOG} \
-        ${CAP_KIT}
+        ${CAP_KIT_IN} \
+        ${PADDING_MIN}
 ##'-----------------------------------------------------------------------------------------#
 
 
@@ -101,7 +113,8 @@ qsub -N "GATK_Joint_VQSR_SNP_${VERSION}" \
        ${OMNI} \
        ${HAPMAP} \
        ${DIR_OUT}/${VERSION}/Raw_Callset/VQSR \
-       ${CAP_KIT}
+       ${CAP_KIT_IN} \
+       ${PADDING_MIN}
 ##'-----------------------------------------------------------------------------------------#
 
 
@@ -127,5 +140,6 @@ qsub -N "GATK_Joint_VQSR_Indel_${VERSION}" \
        ${DBSNPEX} \
        ${MILLS} \
        ${DIR_OUT}/${VERSION}/Raw_Callset/VQSR \
-       ${CAP_KIT}
+       ${CAP_KIT_IN} \
+       ${PADDING_MIN}
 ##'-----------------------------------------------------------------------------------------#
