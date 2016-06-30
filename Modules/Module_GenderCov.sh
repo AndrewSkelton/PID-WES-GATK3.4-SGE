@@ -17,7 +17,7 @@ source ~/.bash_profile
 #  Input       : Sample ID                                                                  |
 #  Input       : Path to Sample's preprocessing base                                        |
 #  Input       : Capture Kit                                                                |
-#  Resources   : Memory     - 5GB                                                           |
+#  Resources   : Memory     - 5GB                                                          |
 #  Resources   : Processors - 5                                                             |
 #-------------------------------------------------------------------------------------------#
 

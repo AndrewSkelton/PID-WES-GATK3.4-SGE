@@ -33,9 +33,12 @@ BUNDLE="/opt/databases/GATK_bundle/2.8/hg19"
 # BASE_DIR="${PROJ_BASE}/SamplePreprocessing/MAY16/Batch_1"
 # BATCH="MAY16_1"
 #Illumina Nextera
-BASE_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing/2016/April/"
-BATCH="B2016April"
-CAP_KIT=${PROJ_BASE}/Capture_Kits/Nextera_Rapid_Capture_Exome/nexterarapidcapture_exome_targetedregions.bed
+# BASE_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing/2016/June/"
+# BATCH="B2016May"
+# CAP_KIT=${PROJ_BASE}/Capture_Kits/Nextera_Rapid_Capture_Exome/nexterarapidcapture_exome_targetedregions.bed
+BASE_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing/2015/December/"
+BATCH="B2015December"
+CAP_KIT=${PROJ_BASE}/Capture_Kits/Agilent_SureSelect_ExomeV5/S04380110_Covered.bed
 
 # BASE_DIR="${PROJ_BASE}/SamplePreprocessing/A1969/Batch_1"
 # BATCH="A1969_Batch_1"
@@ -46,7 +49,7 @@ CAP_KIT=${PROJ_BASE}/Capture_Kits/Nextera_Rapid_Capture_Exome/nexterarapidcaptur
 # BASE_DIR=${PROJ_BASE}/SamplePreprocessing/DEC15
 # BATCH="DEC15"
 #SureSelect V5
-# CAP_KIT=${PROJ_BASE}/Capture_Kits/Agilent_SureSelect_ExomeV5/S04380110_Covered.bed
+
 ##'-----------------------------------------------------------------------------------------#
 
 ##'Training/ Reference set variables from GATK bundle
@@ -103,13 +106,13 @@ if ! ls ${BASE_DIR}/Sample_${SAMPLE_ID}/Alignment/Clean/${SAMPLE_ID}_Clean_GATK.
     ##' $3 - Path to Fastq Files
     ##' $4 - Stage
     ##'-----------------------------------------------------------------------------------------#
-    # qsub -N "Fastqc_${SAMPLE_ID}" \
-    #         -hold_jid "FastqSort_${SAMPLE_ID}" \
-    #           ${SCRIPTS}/Modules/Module_Fastqc.sh \
-    #           ${SAMPLE_ID} \
-    #           ${i} \
-    #           ${i}/Raw_Data \
-    #           "Raw_Data"
+    qsub -N "Fastqc_${SAMPLE_ID}" \
+            -hold_jid "FastqSort_${SAMPLE_ID}" \
+              ${SCRIPTS}/Modules/Module_Fastqc.sh \
+              ${SAMPLE_ID} \
+              ${i} \
+              ${i}/Raw_Data \
+              "Raw_Data"
     ##'-----------------------------------------------------------------------------------------#
 
 
@@ -120,14 +123,14 @@ if ! ls ${BASE_DIR}/Sample_${SAMPLE_ID}/Alignment/Clean/${SAMPLE_ID}_Clean_GATK.
     ##' $4 - Path to Paired Fastq Files
     ##' $5 - Path to Sample's preprocessing base
     ##'---------------------------------------------------------------------------------------#
-    qsub -N "BWA_P_${SAMPLE_ID}" \
-            -hold_jid "FastqSort_${SAMPLE_ID}" \
-              ${SCRIPTS}/Modules/Module_BWA_MEM_P.sh \
-              ${RG} \
-              ${REF_FA} \
-              ${SAMPLE_ID} \
-              ${i}/Raw_Data \
-              ${i}
+    # qsub -N "BWA_P_${SAMPLE_ID}" \
+    #         -hold_jid "FastqSort_${SAMPLE_ID}" \
+    #           ${SCRIPTS}/Modules/Module_BWA_MEM_P.sh \
+    #           ${RG} \
+    #           ${REF_FA} \
+    #           ${SAMPLE_ID} \
+    #           ${i}/Raw_Data \
+    #           ${i}
     ##'---------------------------------------------------------------------------------------#
 
 
@@ -135,11 +138,11 @@ if ! ls ${BASE_DIR}/Sample_${SAMPLE_ID}/Alignment/Clean/${SAMPLE_ID}_Clean_GATK.
     ##' $1 - Sample ID
     ##' $2 - Path to Sample's preprocessing base
     ##'---------------------------------------------------------------------------------------#
-    qsub -N "Picard_${SAMPLE_ID}" \
-            -hold_jid "BWA_*_${SAMPLE_ID}" \
-              ${SCRIPTS}/Modules/Module_PicardNT.sh \
-              ${SAMPLE_ID} \
-              ${i}
+    # qsub -N "Picard_${SAMPLE_ID}" \
+    #         -hold_jid "BWA_*_${SAMPLE_ID}" \
+    #           ${SCRIPTS}/Modules/Module_PicardNT.sh \
+    #           ${SAMPLE_ID} \
+    #           ${i}
     ##'---------------------------------------------------------------------------------------#
 
 
@@ -147,18 +150,18 @@ if ! ls ${BASE_DIR}/Sample_${SAMPLE_ID}/Alignment/Clean/${SAMPLE_ID}_Clean_GATK.
     ##' $1 - Sample ID
     ##' $2 - Path to Sample's preprocessing base
     ##'---------------------------------------------------------------------------------------#
-    qsub -N "GATKRecal_${SAMPLE_ID}" \
-            -hold_jid "Picard_${SAMPLE_ID}" \
-              ${SCRIPTS}/Modules/Module_GATKRecal.sh \
-              ${SAMPLE_ID} \
-              ${i} \
-              ${REF_FA} \
-              ${MILLS} \
-              ${PHASE1INDELS} \
-              ${DBSNP} \
-              ${CAP_KIT} \
-              ${BUNDLE} \
-              ${PADDING}
+    # qsub -N "GATKRecal_${SAMPLE_ID}" \
+    #         -hold_jid "Picard_${SAMPLE_ID}" \
+    #           ${SCRIPTS}/Modules/Module_GATKRecal.sh \
+    #           ${SAMPLE_ID} \
+    #           ${i} \
+    #           ${REF_FA} \
+    #           ${MILLS} \
+    #           ${PHASE1INDELS} \
+    #           ${DBSNP} \
+    #           ${CAP_KIT} \
+    #           ${BUNDLE} \
+    #           ${PADDING}
     ##'---------------------------------------------------------------------------------------#
 
 ##'---------------------------------------------------------------------------------------#

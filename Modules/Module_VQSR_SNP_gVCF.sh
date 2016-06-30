@@ -70,7 +70,7 @@ java -Xmx25g -jar \
         -input ${TMPDIR}/Raw_Callset.vcf \
         -ped ${TMPDIR}/${PED} \
         -L ${TMPDIR}/${CAP_KIT} \
-        --interval_padding ${10} \
+        --interval_padding ${11} \
         -resource:dbsnp,known=true,training=false,truth=false,prior=2.0 ${TMPDIR}/${DBSNP} \
         -resource:1000G,known=false,training=true,truth=false,prior=10.0 ${TMPDIR}/${PHASE1SNPS} \
         -resource:omni,known=false,training=true,truth=true,prior=12.0 ${TMPDIR}/${OMNI} \

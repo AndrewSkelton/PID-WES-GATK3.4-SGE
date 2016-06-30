@@ -23,7 +23,7 @@ BASE_DIR="${PROJ_BASE}/Preprocessing/"
 SCRIPTS=${PROJ_BASE}/Scripts
 DIR_OUT=${PROJ_BASE}/JointCalling/
 LOG=${PROJ_BASE}JointCalling/${VERSION}/JointCalling.log
-CAP_KIT=${PROJ_BASE}/Capture_Kits/Nextera_Rapid_Capture_Exome/nexterarapidcapture_exome_targetedregions.bed
+CAP_KIT=${PROJ_BASE}/Capture_Kits/SS_V5_NRC_Merge/SS_V5_NRC_Merge.bed
 
 mkdir -p ${DIR_OUT}/${VERSION}/Raw_Callset
 echo "*** New Joint Calling Run ***" >> ${LOG}
@@ -48,24 +48,27 @@ REF_FA=${BUNDLE}/ucsc.hg19.fasta
 ##'Build File Path Index
 ##'---------------------------------------------------------------------------------------#
 PADDING_MIN=0
+echo $PADDING_MIN
 while read lineB
 do
   SAM_ID=$(echo "${lineB}" | cut -f 2)
   SAM_PATH=`find ${BASE_DIR} -type d -name "Sample_${SAM_ID}"`
   SAM_PATH_ARRAY+=(${SAM_PATH})
 
-  PADDING_TAR="${SAM_PATH}/Raw_Data/${SAMPLE_ID}_R1.fastq.gz"
-  PADDING_TMP=$(zcat ${PADDING_TAR} | head -10000 | awk '{print length}' | sort -nr | head -1)
-  if [ $PADDING_MIN -eq 0 ]; then
+  PADDING_TAR="${SAM_PATH}/Raw_Data/${SAM_ID}_R1.fastq.gz"
+  PADDING_TMP=$(zcat ${PADDING_TAR} | head -5000 | awk '{print length}' | sort -nr | head -1)
+  echo $PADDING_TMP
+  if (( PADDING_MIN == 0 )); then
     PADDING_MIN=$PADDING_TMP
   else
-    if (( PADDING_TMP < PADDING_MIN )); then; then
+    if (( PADDING_TMP < PADDING_MIN )); then
       PADDING_MIN=$PADDING_TMP
     fi
   fi
-done < ${PROJ_BASE}Scripts/RefFiles/Samples.ped
+done < ${PROJ_BASE}Scripts/Ref/Samples.ped
 CAP_KIT_IN=${PROJ_BASE}/Capture_Kits/SS_V5_NRC_Merge/SS_V5_NRC_Merge.bed
 printf "%s\n" "${SAM_PATH_ARRAY[@]}" > ${DIR_OUT}/${VERSION}/Paths_in.txt
+echo ${PADDING_MIN}
 ##'---------------------------------------------------------------------------------------#
 
 
@@ -75,17 +78,17 @@ printf "%s\n" "${SAM_PATH_ARRAY[@]}" > ${DIR_OUT}/${VERSION}/Paths_in.txt
 #  Input 2     : Paths In
 #  Input 3     : Output Directory
 #  Input 4     : Ped File
+#    -hold_jid '*gVCF*' \
 ##'-----------------------------------------------------------------------------------------#
-qsub -N "GATK_Joint_Calling_${VERSION}" \
-   -hold_jid '*gVCF*' \
-        ${SCRIPTS}/Modules/Module_Genotyping_gVCF.sh \
-        ${BUNDLE} \
-        ${DIR_OUT}/${VERSION}/Paths_in.txt \
-        ${DIR_OUT}/${VERSION}/Raw_Callset \
-        ${PROJ_BASE}Scripts/RefFiles/Samples.ped \
-        ${LOG} \
-        ${CAP_KIT_IN} \
-        ${PADDING_MIN}
+# qsub -N "GATK_Joint_Calling_${VERSION}" \
+#         ${SCRIPTS}/Modules/Module_Genotyping_gVCF.sh \
+#         ${BUNDLE} \
+#         ${DIR_OUT}/${VERSION}/Paths_in.txt \
+#         ${DIR_OUT}/${VERSION}/Raw_Callset \
+#         ${PROJ_BASE}Scripts/Ref/Samples.ped \
+#         ${LOG} \
+#         ${CAP_KIT_IN} \
+#         ${PADDING_MIN}
 ##'-----------------------------------------------------------------------------------------#
 
 
@@ -106,7 +109,7 @@ qsub -N "GATK_Joint_VQSR_SNP_${VERSION}" \
        ${SCRIPTS}/Modules/Module_VQSR_SNP_gVCF.sh \
        ${BUNDLE} \
        ${DIR_OUT}/${VERSION}/Raw_Callset \
-       ${PROJ_BASE}Scripts/RefFiles/Samples.ped \
+       ${PROJ_BASE}Scripts/Ref/Samples.ped \
        ${LOG} \
        ${DBSNPEX} \
        ${PHASE1SNPS} \
@@ -135,7 +138,7 @@ qsub -N "GATK_Joint_VQSR_Indel_${VERSION}" \
        ${SCRIPTS}/Modules/Module_VQSR_Indels_gVCF.sh \
        ${BUNDLE} \
        ${DIR_OUT}/${VERSION}/Raw_Callset \
-       ${PROJ_BASE}Scripts/RefFiles/Samples.ped \
+       ${PROJ_BASE}Scripts/Ref/Samples.ped \
        ${LOG} \
        ${DBSNPEX} \
        ${MILLS} \
