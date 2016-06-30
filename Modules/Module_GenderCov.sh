@@ -1,7 +1,7 @@
 #!/bin/bash
 #$ -cwd -V
 #$ -pe smp 1
-#$ -l h_vmem=50G
+#$ -l h_vmem=20G
 #$ -e ~/log
 #$ -o ~/log
 
@@ -39,15 +39,13 @@ cp ${3} ${TMPDIR}
 ##'Subset Capture Kit for X and Y
 ##'-----------------------------------------------------------------------------------------#
 CAPKIT=$(basename "$3")
-grep "chrX" ${TMPDIR}/${CAPKIT} > ${TMPDIR}/CapKitTmpX.bed
-grep "chrY" ${TMPDIR}/${CAPKIT} > ${TMPDIR}/CapKitTmpY.bed
+grep "SRY" ${TMPDIR}/${CAPKIT} > ${TMPDIR}/CapKitTmpSRY.bed
 ls -lh ${TMPDIR}
 ##'-----------------------------------------------------------------------------------------#
 
 
 ##'Subset Bam
 ##'-----------------------------------------------------------------------------------------#
-samtools view ${TMPDIR}/${1}_Clean_GATK.bam chrX -b > ${TMPDIR}/${1}_ChrX.bam
 samtools view ${TMPDIR}/${1}_Clean_GATK.bam chrY -b > ${TMPDIR}/${1}_ChrY.bam
 ##'-----------------------------------------------------------------------------------------#
 
@@ -55,19 +53,14 @@ samtools view ${TMPDIR}/${1}_Clean_GATK.bam chrY -b > ${TMPDIR}/${1}_ChrY.bam
 ##'Run BedTools to identify intersects
 ##'-----------------------------------------------------------------------------------------#
 bedtools coverage \
-         -hist \
-         -a ${TMPDIR}/CapKitTmpX.bed  \
-         -b ${TMPDIR}/${1}_ChrX.bam > ${TMPDIR}/${1}_Gender_ChrX.cov
-
-bedtools coverage \
-        -hist \
-        -a ${TMPDIR}/CapKitTmpY.bed  \
-        -b ${TMPDIR}/${1}_ChrY.bam > ${TMPDIR}/${1}_Gender_ChrY.cov
+        -a ${TMPDIR}/CapKitTmpSRY.bed  \
+        -b ${TMPDIR}/${1}_ChrY.bam \
+        -d > ${TMPDIR}/${1}_Gender_SRY.cov
 ##'-----------------------------------------------------------------------------------------#
 
 
 ##'Make Directory Structure and Copy Results back to Lustre
 ##'-----------------------------------------------------------------------------------------#
 mkdir -p ${2}/Checks/
-mv ${TMPDIR}/${1}_Gender_Chr*.cov ${2}/Checks/
+mv ${TMPDIR}/${1}_Gender_SRY.cov ${2}/Checks/
 ##'-----------------------------------------------------------------------------------------#
