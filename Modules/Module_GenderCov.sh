@@ -1,7 +1,7 @@
 #!/bin/bash
 #$ -cwd -V
 #$ -pe smp 1
-#$ -l h_vmem=20G
+#$ -l h_vmem=5G
 #$ -e ~/log
 #$ -o ~/log
 
@@ -17,7 +17,8 @@ source ~/.bash_profile
 #  Input       : Sample ID                                                                  |
 #  Input       : Path to Sample's preprocessing base                                        |
 #  Input       : Capture Kit                                                                |
-#  Resources   : Memory     - 5GB                                                          |
+#  Input       : SRY Target                                                                 |
+#  Resources   : Memory     - 5GB                                                           |
 #  Resources   : Processors - 5                                                             |
 #-------------------------------------------------------------------------------------------#
 
@@ -33,13 +34,15 @@ module add apps/samtools/1.3
 ##'-----------------------------------------------------------------------------------------#
 cp ${2}/Alignment/Clean/${1}*_Clean_GATK.* ${TMPDIR}
 cp ${3} ${TMPDIR}
+cp ${4} ${TMPDIR}
 ##'-----------------------------------------------------------------------------------------#
 
 
 ##'Subset Capture Kit for X and Y
 ##'-----------------------------------------------------------------------------------------#
 CAPKIT=$(basename "$3")
-grep "SRY" ${TMPDIR}/${CAPKIT} > ${TMPDIR}/CapKitTmpSRY.bed
+SRY=$(basename "$4")
+# grep "SRY" ${TMPDIR}/${CAPKIT} > ${TMPDIR}/CapKitTmpSRY.bed
 ls -lh ${TMPDIR}
 ##'-----------------------------------------------------------------------------------------#
 
@@ -52,10 +55,10 @@ samtools view ${TMPDIR}/${1}_Clean_GATK.bam chrY -b > ${TMPDIR}/${1}_ChrY.bam
 
 ##'Run BedTools to identify intersects
 ##'-----------------------------------------------------------------------------------------#
-bedtools coverage \
-        -a ${TMPDIR}/CapKitTmpSRY.bed  \
-        -b ${TMPDIR}/${1}_ChrY.bam \
-        -d > ${TMPDIR}/${1}_Gender_SRY.cov
+echo -e "chrY\t2653896\t2656740\tSRY_Target" | \
+bedtools coverage -a - \
+         -b ${TMPDIR}/${1}_ChrY.bam \
+         -d > ${TMPDIR}/${1}_Gender_SRY.cov
 ##'-----------------------------------------------------------------------------------------#
 
 
