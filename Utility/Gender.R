@@ -61,7 +61,7 @@ for(i in unique(coverage$Sample)){
   foo <- coverage %>% filter(Sample == i) %>% 
          left_join(ped_in, by = c("Sample" = "X2"))
   foo_known <- foo[["X5.y"]][1]
-  foo_Pred  <- ifelse(mean(foo$X6.x) > 1, "M", "F")
+  foo_Pred  <- ifelse(mean(foo$X6.x) > 5, "M", "F")
   # message(paste0(foo_known, " ", foo_Pred, " ", mean(foo$X6.x)))
   if(foo_known != foo_Pred){
     message(paste0("Potential Sample Mismatch: ", i, 
@@ -88,6 +88,8 @@ coverage_in <- coverage %>%
 gg <- ggplot(coverage_in, aes(x = X5.x, y = X6.x, group = Sample, colour = X5.y)) +
       geom_line(size = 1) +
       facet_grid(Sample ~ .) +
+      xlab("Locus") +
+      ylab("Depth") +
       theme_bw()
 ##'-----------------------------------------------------------------------------------------#
 
@@ -102,7 +104,7 @@ openxlsx::saveWorkbook(wb, "/Volumes/WORKING_DATA/Exome_Project/Preprocessing/Ge
                        overwrite = T)
 
 png("/Volumes/WORKING_DATA/Exome_Project/Preprocessing/GenderMismatch.png", 
-    width=16, height=30, units="in", res=600) 
+    width=8, height=9, units="in", res=600) 
 print(gg)
 dev.off()
 ##'-----------------------------------------------------------------------------------------#
