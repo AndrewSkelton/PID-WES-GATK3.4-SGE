@@ -74,6 +74,7 @@ Preprocessing
 * `BASE_DIR` - Root directory of a set of samples to preprocess
 * `BATCH` - Unique name of the batch that's being processed (used in the read group)
 * `CAP_KIT` - A bed file containing the targets of the capture kit used
+* `TMPDIR` - Default variable which denotes local scratch of the node the respective job is running on
 
 ### 1.3 Read Groups
 Read groups are essential to the GATK pipeline, and something that has to be very precise to work. GATK seems to be the only framework that makes use of the feature, however it can be inserted in the alignment process using BWA. The read group is broken up into five elements:
@@ -88,4 +89,75 @@ Read groups are essential to the GATK pipeline, and something that has to be ver
 [Read Group Reference](https://www.broadinstitute.org/gatk/guide/article?id=6472)
 
 ### 1.4 Padding length
-GATK requires a `--interval_padding` variable as an engine-level parameter. This is automatically derived in this pipeline by taking the longest line from a sample of 10,000 lines in each fastq file. This is implemented on a sample by sample basis. The parameter is used to extend the span of the `-L` (Capture Kit Bed File) parameter to make sure that low coverage areas, outside target regions are still considered in the analysis.  
+GATK requires a `--interval_padding` variable as an engine-level parameter. This is automatically derived in this pipeline by taking the longest line from a sample of 10,000 lines in each fastq file. This is implemented on a sample by sample basis. The parameter is used to extend the span of the `-L` (Capture Kit Bed File) parameter to make sure that low coverage areas, outside target regions are still considered in the analysis.
+
+### 1.5 Preprocessing Modules
+
+#### 1.5.1 Fastqc
+| Parameter     | Required?     | Type          | Description                     |
+| :------------ |:-------------:| :------------:| :------------------------------ |
+| Output Path   | Yes           |  Path         | Path to write files to          |
+| Sample ID     | Yes           |  String       | Sample Identifier               |
+| Fastq Path    | Yes           |  Path         | Path to fastq file analysed     |
+| Stage         | Yes           |  String       | Creates Sub directory in output |
+* **Waits For:** NA
+* **Mem:** 2GB
+* **Cores:** 1
+
+Fastqc is an essential module that is run automatically to establish the quality of the input data. Crucial information such as adapter presence needs to be established manually (Automatic reporting is in future plans).
+
+
+#### 1.5.2 BWA (Paired End)
+| Parameter     | Required?     | Type          | Description                              |
+| :------------ |:-------------:| :------------:| :--------------------------------------- |
+| Read Group    | Yes           |  String       | Full Read Group String                   |
+| Ref Fasta     | Yes           |  Path + File  | Reference Fasta File                     |
+| Sample ID     | Yes           |  String       | Sample Identifier                        |
+| Fastq Path    | Yes           |  Path         | Path to fastq files (assumes paired-end) |
+| Base          | Yes           |  Path         | Sample's Preprocessing base directory    |
+* **Waits For:** NA
+* **Mem:** 40GB
+* **Cores:** 5
+
+BWA MEM is the recommended program to align DNA sequencing data by the GATK best practices workflow. The readgroup is inserted manually through parameterisation, and an unsorted SAM file is created at the end of this module. It's advantageous to minimise the wait between the output of this module, and the output of the next, as SAM files can take up a significant amount of disk space.
+
+
+#### 1.5.3 Picard Tools
+| Parameter     | Required?     | Type          | Description                              |
+| :------------ |:-------------:| :------------:| :--------------------------------------- |
+| Sample ID     | Yes           |  String       | Sample Identifier                        |
+| Base          | Yes           |  Path         | Sample's Preprocessing base directory    |
+* **Waits For:** BWA MEM
+* **Mem:** 30GB
+* **Cores:** 1
+
+The Picard module performs 2 tasks in serial, and assumes that the resulting SAM file from BWA is fine (Possible upgrade to implement a file size check). After copying the SAM file to the node's local scratch (significant hit to Lustre file system, but no way around that), the Picard module sorts the SAM file and outputs BAM. The resulting BAM file is ran through Picard's `MarkDuplicates` tool, where potential PCR duplicate reads are marked (not removed). *Note: MarkDuplicates likely to change in GATK4.0 (Jan 2017)*
+
+
+#### 1.5.3 Picard Tools
+| Parameter     | Required?     | Type          | Description                              |
+| :------------ |:-------------:| :------------:| :--------------------------------------- |
+| Sample ID     | Yes           |  String       | Sample Identifier                        |
+| Base          | Yes           |  Path         | Sample's Preprocessing base directory    |
+* **Waits For:** BWA MEM
+* **Mem:** 30GB
+* **Cores:** 1
+
+The Picard module performs 2 tasks in serial, and assumes that the resulting SAM file from BWA is fine (Possible upgrade to implement a file size check). After copying the SAM file to the node's local scratch (significant hit to Lustre file system, but no way around that), the Picard module sorts the SAM file and outputs BAM. The resulting BAM file is ran through Picard's `MarkDuplicates` tool, where potential PCR duplicate reads are marked (not removed). *Note: MarkDuplicates likely to change in GATK4.0 (Jan 2017)*
+
+
+#### 1.5.4 GATK Recalibration
+| Parameter     | Required?     | Type          | Description                              |
+| :------------ |:-------------:| :------------:| :--------------------------------------- |
+| Sample ID     | Yes           |  String       | Sample Identifier                        |
+| Base          | Yes           |  Path         | Sample's Preprocessing base directory    |
+| Mills         | Yes           |  Path + File  | Mills GATK Reference VCF                 |
+| Phase1 Indels | Yes           |  Path + File  | 1000 Genomes Indel GATK Reference VCF    |
+| DBSNP         | Yes           |  Path + File  | DBSNP GATK Reference VCF                 |
+| Capture Kit   | Yes           |  Path + File  | Bed Track of target regions              |
+| Padding       | Yes           |  Integer      | Interval Padding Integer                 |
+* **Waits For:** Picard Tools
+* **Mem:** 30GB
+* **Cores:** 5
+
+This is the first instance of touching GATK for the data. This single module calls four different GATK tools; `RealignerTargetCreator`, `IndelRealigner`, `BaseRecalibrator`, and `PrintReads`. The result of this module gives a clean, haplotype discovery ready bam file. The first stage, `RealignerTargetCreator`, tries to identify regions in the sample that are potential indels, which can be realigned to provide a better overall alignment. The `IndelRealigner`, as the name suggests, uses the resulting targets from the `RealignerTargetCreator` to span windows, and realign around the suspect indels. The second stage to this process (`BaseRecalibrator`, and `PrintReads`), implements BQSR, which detects systematic errors made by the sequencer when it estimates the quality score of each base call. BQSR can be thought of as a very intelligent *normalisation*, or *base lining* technique for base quality scores.   
