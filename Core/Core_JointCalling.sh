@@ -18,7 +18,7 @@
 ##'-----------------------------------------------------------------------------------------#
 PROJ_BASE="/home/nas151/WORKING_DATA/Exome_Project/"
 BUNDLE="/opt/databases/GATK_bundle/2.8/hg19"
-VERSION="2016JUNE"
+VERSION="2016JULY"
 BASE_DIR="${PROJ_BASE}/Preprocessing/"
 SCRIPTS=${PROJ_BASE}/Scripts
 DIR_OUT=${PROJ_BASE}/JointCalling/
@@ -80,15 +80,15 @@ echo ${PADDING_MIN}
 #  Input 4     : Ped File
 #    -hold_jid '*gVCF*' \
 ##'-----------------------------------------------------------------------------------------#
-# qsub -N "GATK_Joint_Calling_${VERSION}" \
-#         ${SCRIPTS}/Modules/Module_Genotyping_gVCF.sh \
-#         ${BUNDLE} \
-#         ${DIR_OUT}/${VERSION}/Paths_in.txt \
-#         ${DIR_OUT}/${VERSION}/Raw_Callset \
-#         ${PROJ_BASE}Scripts/Ref/Samples.ped \
-#         ${LOG} \
-#         ${CAP_KIT_IN} \
-#         ${PADDING_MIN}
+qsub -N "GATK_Joint_Calling_${VERSION}" \
+        ${SCRIPTS}/Modules/Module_Genotyping_gVCF.sh \
+        ${BUNDLE} \
+        ${DIR_OUT}/${VERSION}/Paths_in.txt \
+        ${DIR_OUT}/${VERSION}/Raw_Callset \
+        ${PROJ_BASE}Scripts/Ref/Samples.ped \
+        ${LOG} \
+        ${CAP_KIT_IN} \
+        ${PADDING_MIN}
 ##'-----------------------------------------------------------------------------------------#
 
 
@@ -105,7 +105,7 @@ echo ${PADDING_MIN}
 #  Input 9     : VQSR Output Folder
 ##'-----------------------------------------------------------------------------------------#
 qsub -N "GATK_Joint_VQSR_SNP_${VERSION}" \
-   -hold_jid 'GATK_Joint_Calling_*' \
+   -hold_jid "GATK_Joint_Calling_${VERSION}" \
        ${SCRIPTS}/Modules/Module_VQSR_SNP_gVCF.sh \
        ${BUNDLE} \
        ${DIR_OUT}/${VERSION}/Raw_Callset \
@@ -134,7 +134,7 @@ qsub -N "GATK_Joint_VQSR_SNP_${VERSION}" \
 #  Input 9     : VQSR Output Folder
 ##'-----------------------------------------------------------------------------------------#
 qsub -N "GATK_Joint_VQSR_Indel_${VERSION}" \
-   -hold_jid 'GATK_Joint_VQSR_SNP_*' \
+   -hold_jid "GATK_Joint_VQSR_SNP_${VERSION}" \
        ${SCRIPTS}/Modules/Module_VQSR_Indels_gVCF.sh \
        ${BUNDLE} \
        ${DIR_OUT}/${VERSION}/Raw_Callset \
