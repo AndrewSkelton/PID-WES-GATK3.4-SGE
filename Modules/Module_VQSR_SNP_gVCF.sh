@@ -35,7 +35,8 @@ module add apps/gatk/3.4-protected
 ##'Copy Files to Node's Local Scratch
 ##'-----------------------------------------------------------------------------------------#
 cp ${2}/*.vcf* ${TMPDIR}
-cp ${1}/ucsc.hg19.* ${TMPDIR}
+cp ${1}/ucsc.hg19.fasta* ${TMPDIR}
+cp ${1}/ucsc.hg19.dict ${TMPDIR}
 cp ${3} ${TMPDIR}
 cp ${5} ${TMPDIR}
 cp ${6} ${TMPDIR}

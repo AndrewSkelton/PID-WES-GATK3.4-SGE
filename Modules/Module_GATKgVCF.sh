@@ -35,7 +35,8 @@ module add apps/gatk/3.4-protected
 ##'-----------------------------------------------------------------------------------------#
 cp ${2}/Alignment/Clean/${1}_Clean_GATK.ba* ${TMPDIR}
 cp ${3} ${TMPDIR}
-cp ${4}/ucsc.hg19.* ${TMPDIR}
+cp ${4}/ucsc.hg19.fasta* ${TMPDIR}
+cp ${4}/ucsc.hg19.dict ${TMPDIR}
 cp ${5} ${TMPDIR}
 cp ${6} ${TMPDIR}
 ##'-----------------------------------------------------------------------------------------#
@@ -73,10 +74,13 @@ java -Xmx18g -jar \
         -A VariantType \
         -A ClippingRankSumTest \
         -A DepthPerSampleHC \
+        --bamWriterType ALL_POSSIBLE_HAPLOTYPES \
+        --bamOutput ${TMPDIR}/${1}'_Clean_GATK_DeDup_AP.bam' \
         -o ${TMPDIR}/${1}'.g.vcf'
 ##'-----------------------------------------------------------------------------------------#
 
 ##' Move VCF file back to Lustre
 ##'-----------------------------------------------------------------------------------------#
+mv ${TMPDIR}/${1}_Clean_GATK_DeDup* ${2}/Alignment/DeDup/
 mv ${TMPDIR}/${1}.g.vcf* ${2}/GATK/
 ##'-----------------------------------------------------------------------------------------#

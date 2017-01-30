@@ -34,7 +34,8 @@ module add apps/gatk/3.4-protected
 ##'-----------------------------------------------------------------------------------------#
 # cp ${2}/*.vcf* ${TMPDIR}
 cp ${7}/VQSR_SNPs.vcf* ${TMPDIR}
-cp ${1}/ucsc.hg19.* ${TMPDIR}
+cp ${1}/ucsc.hg19.fasta* ${TMPDIR}
+cp ${1}/ucsc.hg19.dict ${TMPDIR}
 cp ${3} ${TMPDIR}
 cp ${5} ${TMPDIR}
 cp ${6} ${TMPDIR}
@@ -66,7 +67,8 @@ java -Xmx25g -jar \
         --interval_padding ${9} \
         -input ${TMPDIR}/VQSR_SNPs.vcf \
         -ped ${TMPDIR}/${PED} \
-        -resource:mills,known=true,training=true,truth=true,prior=12.0 ${TMPDIR}/${MILLS} \
+        -resource:mills,known=false,training=true,truth=true,prior=12.0 ${TMPDIR}/${MILLS} \
+        -resource:dbsnp,known=true,training=false,truth=false,prior=2.0 ${TMPDIR}/${DBSNP} \
         --maxGaussians 4 \
         -an QD \
         -an DP \
@@ -83,6 +85,8 @@ java -Xmx25g -jar \
         -recalFile ${TMPDIR}/VR_INDELs.recal \
         -tranchesFile ${TMPDIR}/VR_INDELs.tranches \
         -rscriptFile ${TMPDIR}/VR_INDELs.R
+
+        #-resource:axiom,known=false,training=true,truth=false,prior=10.0 ${TMPDIR}/${AXIOM} \
 ##'-----------------------------------------------------------------------------------------#
 
 

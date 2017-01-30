@@ -17,8 +17,8 @@
 ##'Set Base Directory and Capture Kits
 ##'-----------------------------------------------------------------------------------------#
 PROJ_BASE="/home/nas151/WORKING_DATA/Exome_Project/"
-BUNDLE="/opt/databases/GATK_bundle/2.8/hg19"
-VERSION="2016JULY"
+BUNDLE="/opt/databases/GATK_bundle/2.8/hg19/"
+VERSION="2017JAN"
 BASE_DIR="${PROJ_BASE}/Preprocessing/"
 SCRIPTS=${PROJ_BASE}/Scripts
 DIR_OUT=${PROJ_BASE}/JointCalling/
@@ -33,11 +33,19 @@ echo "*** New Joint Calling Run ***" >> ${LOG}
 
 ##'Training/ Reference set variables from GATK bundle
 ##'-----------------------------------------------------------------------------------------#
-MILLS=${BUNDLE}/Mills_and_1000G_gold_standard.indels.hg19.vcf
-PHASE1INDELS=${BUNDLE}/1000G_phase1.indels.hg19.vcf
-PHASE1SNPS=${BUNDLE}/1000G_phase1.snps.high_confidence.hg19.vcf
-OMNI=${BUNDLE}/1000G_omni2.5.hg19.vcf
-HAPMAP=${BUNDLE}/hapmap_3.3.hg19.vcf
+# MILLS=${BUNDLE}/Mills_and_1000G_gold_standard.indels.b37.vcf
+# PHASE1INDELS=${BUNDLE}/1000G_phase1.indels.b37.vcf
+# PHASE1SNPS=${BUNDLE}/1000G_phase1.snps.high_confidence.b37.vcf
+# OMNI=${BUNDLE}/1000G_omni2.5.b37.vcf
+# HAPMAP=${BUNDLE}/hapmap_3.3.b37.vcf
+# DBSNP=${BUNDLE}/dbsnp_138.b37.vcf
+# DBSNPEX=${BUNDLE}/dbsnp_138.b37.excluding_sites_after_129.vcf
+# REF_FA=${BUNDLE}/human_g1k_v37_decoy.fasta
+MILLS=${BUNDLE}/Mills_and_1000G_gold_standard.indels.hg19.sites.vcf
+PHASE1INDELS=${BUNDLE}/1000G_phase1.indels.hg19.sites.vcf
+PHASE1SNPS=${BUNDLE}/1000G_phase1.snps.high_confidence.hg19.sites.vcf
+OMNI=${BUNDLE}/1000G_omni2.5.hg19.sites.vcf
+HAPMAP=${BUNDLE}/hapmap_3.3.hg19.sites.vcf
 DBSNP=${BUNDLE}/dbsnp_138.hg19.vcf
 DBSNPEX=${BUNDLE}/dbsnp_138.hg19.excluding_sites_after_129.vcf
 REF_FA=${BUNDLE}/ucsc.hg19.fasta
@@ -51,24 +59,26 @@ PADDING_MIN=0
 echo $PADDING_MIN
 while read lineB
 do
-  SAM_ID=$(echo "${lineB}" | cut -f 2)
-  SAM_PATH=`find ${BASE_DIR} -type d -name "Sample_${SAM_ID}"`
-  SAM_PATH_ARRAY+=(${SAM_PATH})
+  if [ ! -z "$lineB" ]; then
+    SAM_ID=$(echo "${lineB}" | cut -f 2)
+    SAM_PATH=`find ${BASE_DIR} -type d -name "Sample_${SAM_ID}"`
+    SAM_PATH_ARRAY+=(${SAM_PATH})
 
-  PADDING_TAR="${SAM_PATH}/Raw_Data/${SAM_ID}_R1.fastq.gz"
-  PADDING_TMP=$(zcat ${PADDING_TAR} | head -5000 | awk '{print length}' | sort -nr | head -1)
-  echo $PADDING_TMP
-  if (( PADDING_MIN == 0 )); then
-    PADDING_MIN=$PADDING_TMP
-  else
-    if (( PADDING_TMP < PADDING_MIN )); then
+    PADDING_TAR="${SAM_PATH}/Raw_Data/${SAM_ID}_R1.fastq.gz"
+    PADDING_TMP=$(zcat ${PADDING_TAR} | head -5000 | awk '{print length}' | sort -nr | head -1)
+    echo $PADDING_TMP
+    if (( PADDING_MIN == 0 )); then
       PADDING_MIN=$PADDING_TMP
+    else
+      if (( PADDING_TMP < PADDING_MIN )); then
+        PADDING_MIN=$PADDING_TMP
+      fi
     fi
   fi
 done < ${PROJ_BASE}Scripts/Ref/Samples.ped
-CAP_KIT_IN=${PROJ_BASE}/Capture_Kits/SS_V5_NRC_Merge/SS_V5_NRC_Merge.bed
+
 printf "%s\n" "${SAM_PATH_ARRAY[@]}" > ${DIR_OUT}/${VERSION}/Paths_in.txt
-echo ${PADDING_MIN}
+echo "Min Padding Dynamic Param: ${PADDING_MIN}"
 ##'---------------------------------------------------------------------------------------#
 
 
@@ -87,7 +97,7 @@ qsub -N "GATK_Joint_Calling_${VERSION}" \
         ${DIR_OUT}/${VERSION}/Raw_Callset \
         ${PROJ_BASE}Scripts/Ref/Samples.ped \
         ${LOG} \
-        ${CAP_KIT_IN} \
+        ${CAP_KIT} \
         ${PADDING_MIN}
 ##'-----------------------------------------------------------------------------------------#
 
@@ -116,7 +126,7 @@ qsub -N "GATK_Joint_VQSR_SNP_${VERSION}" \
        ${OMNI} \
        ${HAPMAP} \
        ${DIR_OUT}/${VERSION}/Raw_Callset/VQSR \
-       ${CAP_KIT_IN} \
+       ${CAP_KIT} \
        ${PADDING_MIN}
 ##'-----------------------------------------------------------------------------------------#
 
@@ -143,6 +153,6 @@ qsub -N "GATK_Joint_VQSR_Indel_${VERSION}" \
        ${DBSNPEX} \
        ${MILLS} \
        ${DIR_OUT}/${VERSION}/Raw_Callset/VQSR \
-       ${CAP_KIT_IN} \
+       ${CAP_KIT} \
        ${PADDING_MIN}
 ##'-----------------------------------------------------------------------------------------#

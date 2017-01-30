@@ -30,12 +30,15 @@ module add apps/gatk/3.4-protected
 
 ##'Copy Files to Node's Local Scratch
 ##'-----------------------------------------------------------------------------------------#
-cp ${1}/ucsc.hg19.* ${TMPDIR}
+# cp ${1}/human_g1k_v37_decoy.fasta* ${TMPDIR}
+# cp ${1}/human_g1k_v37_decoy.dict ${TMPDIR}
+cp ${1}/ucsc.hg19.fasta* ${TMPDIR}
+cp ${1}/ucsc.hg19.dict ${TMPDIR}
 cp ${4} ${TMPDIR}
 cp ${6} ${TMPDIR}
 ##'-----------------------------------------------------------------------------------------#
 
-
+echo `ls ${TMPDIR}` >> ${5}
 
 ##'Get gVCF Files
 ##'-----------------------------------------------------------------------------------------#
@@ -67,8 +70,8 @@ java -Xmx42g -jar \
     ${GATK_ROOT}/GenomeAnalysisTK.jar \
     -T GenotypeGVCFs \
         -L ${TMPDIR}/${CAP_KIT} \
-        --interval_padding 75 \
-        -nt 10 \
+        --interval_padding ${7} \
+        -nt 1 \
         -ped ${TMPDIR}/${PED} \
         -R ${TMPDIR}/ucsc.hg19.fasta \
         --max_alternate_alleles 50 \

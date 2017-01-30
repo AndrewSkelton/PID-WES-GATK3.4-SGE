@@ -1,5 +1,5 @@
-foo <- read_tsv("/Volumes/andrew/2016Jun_WES_Karin/Recalibrated_Callset/out.relatedness2") %>% as.data.frame
-ped <- read_tsv("/Volumes/andrew/2016Jun_WES_Karin/pedigree/Samples.ped", col_names = F) %>% as.data.frame
+foo <- read_tsv("/Volumes/andrew/Temp/Raw_Callset/out.relatedness2") %>% as.data.frame
+ped <- read_tsv("/Volumes/WORKING_DATA/Exome_Project/Scripts/Ref/Samples.ped", col_names = F) %>% as.data.frame
 
 Output_Table <- c()
 for(i in unique(ped$X1)) {

@@ -1,7 +1,7 @@
 #!/bin/bash
 #$ -cwd -V
 #$ -pe smp 1
-#$ -l h_vmem=5G
+#$ -l h_vmem=10G
 #$ -e ~/log
 #$ -o ~/log
 
@@ -25,7 +25,8 @@ source ~/.bash_profile
 
 ##'Add Modules
 ##'-----------------------------------------------------------------------------------------#
-module add apps/bedtools/2.20.1
+# module add apps/bedtools/2.20.1
+module add apps/bedtools/2.25
 module add apps/samtools/1.3
 ##'-----------------------------------------------------------------------------------------#
 

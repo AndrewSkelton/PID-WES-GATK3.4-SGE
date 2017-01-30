@@ -30,6 +30,14 @@ PED=${2}Samples.ped
 ##'-----------------------------------------------------------------------------------------#
 
 
+##'Create Folder Structure and output File
+##'-----------------------------------------------------------------------------------------#
+dos2unix ${2}SampleMap.txt
+mac2unix ${2}SampleMap.txt
+cp ${2}SampleMap.txt ${2}SampleMap_original.txt
+sed '1d' ${2}SampleMap.txt > ${2}/tmpfile; mv ${2}/tmpfile ${2}SampleMap.txt
+##'-----------------------------------------------------------------------------------------#
+
 
 ##'Check if Log File Exists
 ##'-----------------------------------------------------------------------------------------#
@@ -45,12 +53,10 @@ fi
 
 ##'Check if PED File Exists
 ##'-----------------------------------------------------------------------------------------#
-if ls ${PED} 1> /dev/null 2>&1; then
-  echo "Ped File Exists, deleting old version" >> ${LOG}
-  rm ${PED}
-fi
+rm ${PED}
 touch ${PED}
-echo "Created Ped File" >> ${LOG}
+echo "Removing Old Ped Files... Done." >> ${LOG}
+echo "Creating Ped File... Done." >> ${LOG}
 ##'-----------------------------------------------------------------------------------------#
 
 
@@ -70,37 +76,61 @@ do
   PROBAN=$(echo "${line}" | cut -f 6)
   PAT_ID=$(echo "${line}" | cut -f 3)
   MAT_ID=$(echo "${line}" | cut -f 4)
-
-  # Check Paternal Sample Exists
-  PAT_QUERY=`find ${1} -type f -name "${PAT_ID}.g.vcf" | wc -l`
-  if (( PAT_QUERY == 0 )); then
-    echo "Pedigree Error: ${SAM_ID} is part of ${FAM_ID}, ${PAT_ID} Not Found, setting to 0" >> ${LOG}
-    PAT_ID="0"
-  fi
-
-  # Check Maternal Sample Exists
-  MAT_QUERY=`find ${1} -type f -name "${MAT_ID}.g.vcf" | wc -l`
-  if (( MAT_QUERY == 0 )); then
-    echo "Pedigree Error: ${SAM_ID} is part of ${FAM_ID}, ${MAT_ID} Not Found, setting to 0" >> ${LOG}
-    MAT_ID="0"
-  fi
-
-  # Recode for Gender
-  if [ $(echo "${line}" | cut -f 5) = "M" ]; then
+  SEX=$(echo "${line}" | cut -f 5)
+  # echo "${SAM_ID}: ${SEX}"
+  if [[ $SEX == *"M"* ]]; then
     SEX="1"
   else
     SEX="2"
   fi
+  # echo "${SAM_ID}: ${SEX}"
 
-  # Check if File Exists
-  query_list=`find ${1} -type f -name "${SAM_ID}.g.vcf" | wc -l`
-  if (( query_list > 0 )); then
-    echo -e "${FAM_ID}\t${SAM_ID}\t${PAT_ID}\t${MAT_ID}\t${SEX}\t${PROBAN}" >> ${PED}
-  else
-    if [[ ${FAM_ID} == "FAM"* ]]; then
-      echo "Sample Missing: *WARNING* ${SAM_ID} is part of ${FAM_ID}" >> ${LOG}
+  # echo $FAM_ID
+  # if [[ $FAM_ID == "FAM"* ]]; then
+  #   echo "Family Sample"
+  # else
+  #   echo "Singleton Sample"
+  # fi
+
+  if [[ $FAM_ID == "FAM"* ]]; then
+
+    if [[ $PAT_ID != "0" ]]; then
+      # Check Paternal Sample Exists
+      PAT_QUERY=`find ${1} -type f -name "${PAT_ID}.g.vcf" | wc -l`
+      if (( PAT_QUERY == 0 )); then
+        echo "Pedigree Error: ${SAM_ID} is part of ${FAM_ID}, Paternal Sample: ${PAT_ID} Not Found, setting to 0" >> ${LOG}
+        PAT_ID="0"
+      fi
+    fi
+
+    if [[ $MAT_ID != "0" ]]; then
+      # Check Maternal Sample Exists
+      MAT_QUERY=`find ${1} -type f -name "${MAT_ID}.g.vcf" | wc -l`
+      if (( MAT_QUERY == 0 )); then
+        echo "Pedigree Error: ${SAM_ID} is part of ${FAM_ID}, Maternal Sample: ${MAT_ID} Not Found, setting to 0" >> ${LOG}
+        MAT_ID="0"
+      fi
+    fi
+
+    # Check if File Exists
+    query_list=`find ${1} -type f -name "${SAM_ID}.g.vcf" | wc -l`
+    if (( query_list > 0 )); then
+      echo -e "${FAM_ID}\t${SAM_ID}\t${PAT_ID}\t${MAT_ID}\t${SEX}\t${PROBAN}" >> ${PED}
     else
-      echo "Sample Missing: ${SAM_ID}" >> ${LOG}
+      if [[ ${FAM_ID} == "FAM"* ]]; then
+        echo "Sample Missing: *WARNING* ${SAM_ID} is part of ${FAM_ID}" >> ${LOG}
+      else
+        echo "Sample Missing: ${SAM_ID}" >> ${LOG}
+      fi
+    fi
+  fi
+
+  if [[ $FAM_ID == "SGL"* ]]; then
+    query_list=`find ${1} -type f -name "${SAM_ID}.g.vcf" | wc -l`
+    if (( query_list > 0 )); then
+      echo -e "${FAM_ID}\t${SAM_ID}\t${PAT_ID}\t${MAT_ID}\t${SEX}\t${PROBAN}" >> ${PED}
+    else
+      echo "Sample Missing: *WARNING* ${SAM_ID}" >> ${LOG}
     fi
   fi
 

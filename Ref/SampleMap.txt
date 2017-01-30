@@ -1,52 +1,200 @@
-SGL1	0994713000047W	0	0	F	0	SureSelect V5
-FAM1	14D4090	0	0	M	0	SureSelect V5
-FAM1	14D4091	0	0	F	0	SureSelect V5
-FAM1	746352	14D4090	14D4091	M	1	SureSelect V5
-FAM2	D199211	D207050	D207049	F	1	SureSelect V5
-FAM3	D201259	0	0	F	0	SureSelect V5
-FAM2	D207049	0	0	F	0	SureSelect V5
-FAM2	D207050	0	0	M	0	SureSelect V5
-SGL2	D212943	0	0	M	1	SureSelect V5
-SGL3	D214101	0	0	F	1	SureSelect V5
-SGL4	D214129	0	0	M	0	SureSelect V5
-SGL5	D214130	0	0	F	0	SureSelect V5
-FAM4	D217078	0	0	F	0	SureSelect V5
-FAM4	D217079	0	0	M	0	SureSelect V5
-FAM4	D217287	D217079	D217078	M	1	SureSelect V5
-SGL6	D218288	0	0	F	1	SureSelect V5
-SGL7	F05238	0	0	F	1	SureSelect V5
-SGL8	F07602	0	0	M	1	SureSelect V5
-SGL9	F0873	0	0	F	1	SureSelect V5
-FAM3	F15103	PID11711	D201259	F	1	SureSelect V5
-SGL10	F99248	0	0	F	1	SureSelect V5
-SGL11	GNB040315	0	0	M	1	SureSelect V5
-SGL12	GNB200214	0	0	M	0	SureSelect V5
-SGL13	PID1102	0	0	M	1	SureSelect V5
-FAM3	PID11711	0	0	M	0	Nextera Rapid Capture Exome
-FAM3	PID3337	PID11711	D201259	F	0	Nextera Rapid Capture Exome
-FAM5	GNB120815	FB5P1	0	M	1	Nextera Rapid Capture Exome
-FAM5	FB5P1	0	0	M	0	Nextera Rapid Capture Exome
-SGL14	D24207	0	0	M	1	Nextera Rapid Capture Exome
-SGL15	GNB051015	0	0	F	1	Nextera Rapid Capture Exome
-FAM6	NG001	NG002	NG003	M	1	Nextera Rapid Capture Exome
-FAM6	NG002	0	0	M	0	Nextera Rapid Capture Exome
-FAM6	NG003	0	0	F	0	Nextera Rapid Capture Exome
-FAM6	B5P4	NG002	NG003	F	1	Nextera Rapid Capture Exome
-FAM7	NG004	NG005	NG006	M	1	Nextera Rapid Capture Exome
-FAM7	NG005	0	0	M	0	Nextera Rapid Capture Exome
-FAM7	NG006	0	0	F	0	Nextera Rapid Capture Exome
-FAM8	F15457	NG009	NG008	F	1	Nextera Rapid Capture Exome
-FAM8	NG008	0	0	F	0	Nextera Rapid Capture Exome
-FAM8	NG009	0	0	M	0	Nextera Rapid Capture Exome
-SGL16	NG011	0	0	F	1	Nextera Rapid Capture Exome
-FAM9	15M09134	0	0	F	0	Nextera Rapid Capture Exome
-FAM9	15M09133	0	15M09134	F	0	Nextera Rapid Capture Exome
-FAM9	15M09127	0	15M09134	F	0	Nextera Rapid Capture Exome
-SGL17	B6P1	0	0	N	1	Nextera Rapid Capture Exome
-SGL18	B6P2	0	0	M	1	Nextera Rapid Capture Exome
-FAM10	C0002	0	0	M	0	Nextera Rapid Capture Exome
-FAM10	C0001	0	0	F	0	Nextera Rapid Capture Exome
-FAM10	C0003	C0002	C0001	M	0	Nextera Rapid Capture Exome
-FAM11	NG015	0	0	F	0	Nextera Rapid Capture Exome
-FAM11	NG016	0	0	M	0	Nextera Rapid Capture Exome
-FAM11	NG017	NG016	NG015	N	1	Nextera Rapid Capture Exome
+SGL1	F98468	0	0	F	1	SureSelect V5	2013December
+SGL2	D114041	0	0	F	1	SureSelect V5	2013May
+SGL3	F0740	0	0	M 	1	ND	NIC
+FAM1	D169918	GNB200214	0994713000047W	M	1	SureSelect V5	2013May
+SGL4	F151864	0	0	M	1	ND	NIC
+SGL5	D170484	0	0	M 	1	SureSelect V5	2013May
+FAM25	D132669	L1405621004	0	F	1	Nextera Rapid Capture Exome	2014September1
+FAM25	F1159	L1405621004	0	F	1	Nextera Rapid Capture Exome	2014September2
+FAM25	D129374	L1405621004	0	F	1	Nextera Rapid Capture Exome	2014September2
+FAM25	F09660	L1405621004	0	F	1	Nextera Rapid Capture Exome	2014September2
+FAM25	L1405621004	0	0	M	1	Nextera Rapid Capture Exome	2014September2
+FAM27	D185139	0	0	M	0	Nextera Rapid Capture Exome	2014September2
+SGL12	D151992	0	0	F	0	ND	NIC
+SGL13	F98212	0	0	M	1	SureSelect V5	2013December
+SGL14	D9646	0	0	F	1	SureSelect V5	2013May
+FAM2	D134555	0	0	M	1	Nextera Rapid Capture Exome	2014September2
+FAM2	D134427	D134555	0	M	1	Nextera Rapid Capture Exome	2014September1
+SGL15	F05506	0	0	F	1	SureSelect V5	2013December
+FAM3	Re241013PD186893	Re241013FD186908	0	F	1	Nextera Rapid Capture Exome	2014September2
+FAM3	Re241013FD186908	0	0	M	1	Nextera Rapid Capture Exome	2014September2
+SGL16	D171987	0	0	M	1	SureSelect V5	2013May
+SGL17	D05685	0	0	M	1	SureSelect V5	2013May
+SGL18	D72902	0	0	F	1	Nextera Rapid Capture Exome	2014September2
+SGL19	F09207	0	0	M	1	Nextera Rapid Capture Exome	2014September2
+SGL20	D83732	0	0	M	1	SureSelect V5	2013May
+SGL21	F07472	0	0	F	1	ND	NIC
+SGL22	D62925	0	0	M	1	SureSelect V5	2013May
+SGL23	F08744	0	0	M	1	SureSelect V5	2013December
+SGL24	D13415	0	0	M	1	SureSelect V5	2013May
+FAM4	F13349	0	15M09134	F	1	SureSelect V5	2013December
+SGL25	D123265	0	0	M 	1	ND	NIC
+SGL26	F08401	0	0	F	1	ND	NIC
+SGL27	D144285	0	0	M	1	ND	NIC
+SGL28	F05408	0	0	M	1	ND	NIC
+SGL29	F10657	0	0	M	1	ND	NIC
+SGL30	F05460	0	0	M	1	SureSelect V5	2013December
+SGL31	F11151	0	0	M	1	SureSelect V5	2013December
+SGL32	F00603	0	0	M	1	SureSelect V5	2013December
+SGL33	F0852	0	0	F	1	SureSelect V5	2013December
+SGL34	D08064	0	0	F	1	SureSelect V5	2013May
+SGL35	F05163	0	0	M	1	SureSelect V5	2013December
+SGL36	F03566	0	0	F	1	SureSelect V5	2013December
+FAM27	F13546	D185139	0	M	1	Nextera Rapid Capture Exome	2014September2
+SGL38	D171748	0	0	M 	1	SureSelect V5	2013May
+SGL39	F06341	0	0	F	1	SureSelect V5	2013December
+SGL40	F98408	0	0	M	1	ND	NIC
+SGL41	F99376	0	0	F	1	ND	NIC
+SGL42	D122641	0	0	M	1	SureSelect V5	2013May
+SGL43	D100563	0	0	M	1	SureSelect V5	2013May
+SGL44	D164942	0	0	M	1	SureSelect V5	2013May
+SGL45	F08560	0	0	F	1	SureSelect V5	2013December
+SGL46	F07191	0	0	M	1	SureSelect V5	2013December
+SGL47	D36421	0	0	M	1	SureSelect V5	2013May
+SGL48	F10149	0	0	F	1	SureSelect V5	2013December
+SGL49	F03665	0	0	F	1	SureSelect V5	2013December
+SGL50	F08196	0	0	F	1	SureSelect V5	2013December
+SGL51	F10577	0	0	M	1	ND	NIC
+SGL52	D88892	0	0	F	1	SureSelect V5	2013May
+SGL53	D11016	0	0	F	1	SureSelect V5	2013May
+SGL54	F08272	0	0	F	1	ND	NIC
+SGL55	F05339	0	0	F	1	ND	NIC
+SGL56	F07371	0	0	M	1	ND	NIC
+SGL57	F05326	0	0	M	1	ND	NIC
+SGL58	F05232	0	0	M	1	ND	NIC
+SGL59	F07552	0	0	M	1	ND	NIC
+SGL60	F06367	0	0	F	1	ND	NIC
+FAM5	D134130	D214129	D214130	M	1	SureSelect V5	2013December
+SGL61	D86968	0	0	M	1	SureSelect V5	2013May
+SGL62	F98407	0	0	M	1	SureSelect V5	2013December
+SGL63	F13447	0	0	F	1	Nextera Rapid Capture Exome	NIC
+FAM7	D175429	0	0	M	0	Nextera Rapid Capture Exome	2014September2
+SGL64	D16618	0	0	M	1	SureSelect V5	2013May
+SGL65	D174381	0	0	M	1	SureSelect V5	2013May
+SGL66	D43046	0	0	M	1	Nextera Rapid Capture Exome	2014September2
+SGL67	F01426	0	0	M	1	Nextera Rapid Capture Exome	2014September2
+SGL68	D99945	0	0	M 	1	SureSelect V5	2013May
+SGL69	D190098	0	0	F	1	Nextera Rapid Capture Exome	2014September1
+FAM6	D197722	0	D197723	F	1	Nextera Rapid Capture Exome	2014September1
+FAM8	D1418978	0	0	F	0	Nextera Rapid Capture Exome	2014September2
+SGL70	F11228	0	0	F	1	ND	NIC
+FAM7	D185425	0	0	F	0	Nextera Rapid Capture Exome	2014September1
+SGL71	D129266	0	0	M	1	SureSelect V5	2014July
+FAM7	D185428	D175429	D185425	F	1	Nextera Rapid Capture Exome	2014September2
+SGL72	F05139	0	0	M	1	ND	NIC
+SGL73	D62018	0	0	F	1	SureSelect V5	2013May
+SGL74	D180850	0	0	F	1	SureSelect V5	2013December
+SGL75	D115022	0	0	M 	1	SureSelect V5	2013May
+SGL76	F07230	0	0	F	1	SureSelect V5	2014July
+SGL77	F03450	0	0	F	1	SureSelect V5	NIC
+SGL78	F02209	0	0	F	1	SureSelect V5	2013December
+SGL79	D198022	0	0	F	0	Nextera Rapid Capture Exome	2014September2
+FAM6	D197723	0	0	F	0	Nextera Rapid Capture Exome	2014September2
+SGL80	D118569	0	0	F	1	Nextera Rapid Capture Exome	2014September2
+SGL81	F03513	0	0	M	1	SureSelect V5	2014July
+FAM8	GNB8513	D1418979	D1418978	F	1	Nextera Rapid Capture Exome	2014September2
+FAM9	D168414	D197292	D197408	F	1	Nextera Rapid Capture Exome	2014September2
+FAM10	F09508	14D4090	14D4091	F	1	SureSelect V5	2013December
+SGL82	D10020	0	0	M	1	SureSelect V5	2013May
+SGL83	F09591	0	0	M	1	SureSelect V5	2013December
+SGL84	D163417	0	0	M	1	SureSelect V5	2013May
+FAM26	F99359	0	0	M	1	SureSelect V5	2013December
+SGL86	D146989	0	0	F	1	SureSelect V5	2013May
+SGL87	D122836	0	0	M 	1	SureSelect V5	2013May
+FAM10	F09507	14D4090	14D4091	M	1	SureSelect V5	2013December
+SGL88	D198023	0	0	M	0	Nextera Rapid Capture Exome	2014September2
+FAM26	F99129	0	0	M	1	SureSelect V5	2013December
+FAM8	D1418979	0	0	M	0	Nextera Rapid Capture Exome	2014September2
+SGL91	D050227	0	0	F	1	SureSelect V5	2013May
+SGL92	F99248	0	0	F	1	Nextera Rapid Capture Exome	NIC
+SGL93	D40211	0	0	M	1	Nextera Rapid Capture Exome	2014September2
+SGL94	F0193	0	0	M	1	Nextera Rapid Capture Exome	2014September2
+SGL95	F98/468	0	0	F	1	ND	NIC
+SGL96	F11430	0	0	F	1	ND	NIC
+FAM9	D197408	0	0	F	0	Nextera Rapid Capture Exome	2014September2
+FAM9	D197290	D197292	D197408	M	1	Nextera Rapid Capture Exome	2014September2
+FAM7	D185472	D175429	D185425	F	1	Nextera Rapid Capture Exome	2014September1
+FAM9	D197292	0	0	M	0	Nextera Rapid Capture Exome	2014September2
+FAM1	0994713000047W	0	0	F	0	SureSelect V5	2015December
+FAM10	14D4090	0	0	M	0	SureSelect V5	2015December
+FAM10	14D4091	0	0	F	0	SureSelect V5	2015December
+FAM10	746352	14D4090	14D4091	M	1	SureSelect V5	2015December
+FAM11	D199211	D207050	D207049	F	1	SureSelect V5	2015December
+FAM13	D201259	0	0	F	0	SureSelect V5	2015December
+FAM11	D207049	0	0	F	0	SureSelect V5	2015December
+FAM11	D207050	0	0	M	0	SureSelect V5	2015December
+SGL97	D212943	0	0	M	1	SureSelect V5	2015December
+SGL98	D214101	0	0	F	1	SureSelect V5	2015December
+FAM5	D214129	0	0	M	0	SureSelect V5	2015December
+FAM5	D214130	0	0	F	0	SureSelect V5	2015December
+FAM12	D217078	0	0	F	0	SureSelect V5	2015December
+FAM12	D217079	0	0	M	0	SureSelect V5	2015December
+FAM12	D217287	D217079	D217078	M	1	SureSelect V5	2015December
+FAM32	D218288	NG035	NG036	F	1	SureSelect V5	2015December
+SGL100	F05238	0	0	F	1	SureSelect V5	2015December
+FAM19	F07602	0	0	M	1	SureSelect V5	2015December
+FAM19	F0873	0	0	F	1	SureSelect V5	2015December
+FAM13	F15103	PID11711	D201259	F	1	SureSelect V5	2015December
+SGL92	F99248	0	0	F	1	SureSelect V5	2015December
+SGL104	GNB040315	0	0	M	1	SureSelect V5	2015December
+FAM1	GNB200214	0	0	M	0	SureSelect V5	2015December
+SGL105	PID1102	0	0	M	1	SureSelect V5	2015December
+FAM13	PID11711	0	0	M	0	Nextera Rapid Capture Exome	2016April
+FAM13	PID3337	PID11711	D201259	F	0	Nextera Rapid Capture Exome	2016April
+FAM17	GNB120815	FB5P1	0	M	1	Nextera Rapid Capture Exome	2016April
+FAM17	FB5P1	0	0	M	0	Nextera Rapid Capture Exome	2016June
+SGL106	D24207	0	0	M	1	Nextera Rapid Capture Exome	2016April
+SGL107	GNB051015	0	0	F	1	Nextera Rapid Capture Exome	2016April
+FAM14	NG001	NG002	NG003	M	1	Nextera Rapid Capture Exome	2016April
+FAM14	NG002	0	0	M	0	Nextera Rapid Capture Exome	2016April
+FAM14	NG003	0	0	F	0	Nextera Rapid Capture Exome	2016April
+FAM14	B5P4	NG002	NG003	F	1	Nextera Rapid Capture Exome	2016June
+FAM15	NG004	NG005	NG006	M	1	Nextera Rapid Capture Exome	2016April
+FAM15	NG005	0	0	M	0	Nextera Rapid Capture Exome	2016May
+FAM15	NG006	0	0	F	0	Nextera Rapid Capture Exome	2016May
+FAM16	F15457	NG008	NG009	F	1	Nextera Rapid Capture Exome	2016May
+FAM16	NG008	0	0	M	0	Nextera Rapid Capture Exome	2016May
+FAM16	NG009	0	0	F	0	Nextera Rapid Capture Exome	2016May
+SGL108	NG011	0	0	F	1	Nextera Rapid Capture Exome	2016May
+FAM4	15M09134	0	0	F	0	Nextera Rapid Capture Exome	2016May
+FAM4	15M09133	0	15M09134	F	0	Nextera Rapid Capture Exome	2016May
+FAM4	15M09127	0	15M09134	F	0	Nextera Rapid Capture Exome	2016May
+SGL109	B6P1	0	0	M	1	Nextera Rapid Capture Exome	2016June
+FAM19	B6P2	0	0	M	1	Nextera Rapid Capture Exome	2016June
+FAM18	C0002	0	0	M	0	Nextera Rapid Capture Exome	2016June
+FAM18	C0001	0	0	F	0	Nextera Rapid Capture Exome	2016June
+FAM18	C0003	C0002	C0001	M	0	Nextera Rapid Capture Exome	2016June
+FAM20	NG015	0	0	F	0	Nextera Rapid Capture Exome	2016June
+FAM20	NG016	0	0	M	0	NOT SEQUENCED YET	NOT SEQUENCED YET
+FAM20	NG017	NG016	NG015	M 	1	Nextera Rapid Capture Exome	2016June
+FAM21	NG012	NG013	NG014	M	1	Nextera Rapid Capture Exome	2016August
+FAM21	NG013	0	0	M	0	Nextera Rapid Capture Exome	2016August
+FAM21	NG014	0	0	F	0	Nextera Rapid Capture Exome	2016August
+FAM22	NG020	0	NG021	M	1	Nextera Rapid Capture Exome	2016August
+FAM22	NG021	0	0	F	0	Nextera Rapid Capture Exome	2016August
+FAM23	NG022	NG027	NG023	F	1	Nextera Rapid Capture Exome	2016August
+FAM23	NG023	0	0	F	0	Nextera Rapid Capture Exome	2016August
+FAM23	NG026	NG027	NG023	F	0	NOT SEQUENCED YET	NOT SEQUENCED YET
+FAM23	NG027	0	0	M	0	Nextera Rapid Capture Exome	2016August
+FAM24	NG028	NG030	NG029	M	1	Nextera Rapid Capture Exome	2016August
+FAM24	NG029	0	0	F	0	NOT SEQUENCED YET	NOT SEQUENCED YET
+FAM24	NG030	0	0	M	0	NOT SEQUENCED YET	NOT SEQUENCED YET
+FAM28	NG031	NG039	NG032	F	1	Nextera Rapid Capture Exome	2016October
+FAM28	NG032	0	0	F	0	Nextera Rapid Capture Exome	2016October
+FAM28	NG039	0	0	M	0	Nextera Rapid Capture Exome	2016October
+FAM29	NG040	NG042	NG041	M	1	Nextera Rapid Capture Exome	2016October
+FAM29	NG041	0	0	F	0	Nextera Rapid Capture Exome	2016October
+FAM29	NG042	0	0	M	0	Nextera Rapid Capture Exome	2016October
+FAM30	NG044	NG046	NG045	M	1	Nextera Rapid Capture Exome	2016October
+FAM30	NG045	0	0	F	0	Nextera Rapid Capture Exome	2016October
+FAM30	NG046	0	0	M	0	Nextera Rapid Capture Exome	2016October
+FAM31	NG024	NG037	NG025	F	1	Nextera Rapid Capture Exome	2017January
+FAM31	NG025	0	0	F	0	Nextera Rapid Capture Exome	2017January
+FAM31	NG037	0	0	M	0	Nextera Rapid Capture Exome	2017January
+FAM32	NG035	0	0	M	0	Nextera Rapid Capture Exome	2017January
+FAM32	NG036	0	0	F	0	Nextera Rapid Capture Exome	2017January
+FAM33	NG050	NG051	0	M	1	Nextera Rapid Capture Exome	2017January
+FAM33	NG051	0	0	M	0	Nextera Rapid Capture Exome	2017January
+FAM34	NG049	0	NG052	F	1	Nextera Rapid Capture Exome	2017January
+FAM34	NG052	0	0	F	0	Nextera Rapid Capture Exome	2017January
+

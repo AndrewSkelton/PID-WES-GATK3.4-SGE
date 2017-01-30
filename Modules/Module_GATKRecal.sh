@@ -37,13 +37,14 @@ module add apps/gatk/3.4-protected
 ##'Copy Files to Node
 ##'-----------------------------------------------------------------------------------------#
 cp ${2}/Alignment/Clean/${1}*_Marked.* ${TMPDIR}
-cp ${3} ${TMPDIR}
+cp ${8}/ucsc.hg19.dict ${TMPDIR}
 cp ${3} ${TMPDIR}
 cp ${4} ${TMPDIR}
 cp ${5} ${TMPDIR}
 cp ${6} ${TMPDIR}
 cp ${7} ${TMPDIR}
-cp ${8}/ucsc.hg19.* ${TMPDIR}
+cp ${3}.* ${TMPDIR}
+ls ${TMPDIR}
 ##'-----------------------------------------------------------------------------------------#
 
 ##'Get Reference Filenames

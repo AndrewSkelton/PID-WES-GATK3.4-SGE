@@ -30,5 +30,5 @@ LOG=${PROJ_BASE}Scripts/Ref/PedigreeGen.log
 sh ${SCRIPTS}/Modules/Module_PedigreeGen.sh \
         ${PROJ_BASE}Preprocessing/ \
         ${PROJ_BASE}Scripts/Ref/ \
-        ${PROJ_BASE}VarCalling/
+        ${PROJ_BASE}Scripts/Ref/
 ##'---------------------------------------------------------------------------------------#

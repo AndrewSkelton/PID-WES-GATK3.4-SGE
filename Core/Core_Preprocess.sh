@@ -12,7 +12,8 @@
 ##'-----------------------------------------------------------------------------------------#
 PROJ_BASE="/home/nas151/WORKING_DATA/Exome_Project"
 SCRIPTS=${PROJ_BASE}/Scripts
-BUNDLE="/opt/databases/GATK_bundle/2.8/hg19"
+# BUNDLE="/opt/databases/GATK_bundle/2.8/b37/"
+BUNDLE="/opt/databases/GATK_bundle/2.8/hg19/"
 
 ##' Older Samples - Still to be organised
 # BASE_DIR="/home/nas151/WORKING_DATA/Exomes/old_samples/Louise"
@@ -26,15 +27,15 @@ BUNDLE="/opt/databases/GATK_bundle/2.8/hg19"
 
 # BASE_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing/2015/December/"
 # BATCH="B2015December"
-BASE_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing/2013/May/"
-BATCH="B2013May_A1969_1"
+# BASE_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing/2013/May/"
+# BATCH="B2013May_A1969_1"
 # BASE_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing/2013/December/"
 # BATCH="B2013December_A1969_2"
 # BASE_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing/2014/July/"
 # BATCH="B2014July_A1969_3"
-CAP_KIT=${PROJ_BASE}/Capture_Kits/Agilent_SureSelect_ExomeV5/S04380110_Covered.bed
-#
-#
+# CAP_KIT=${PROJ_BASE}/Capture_Kits/Agilent_SureSelect_ExomeV5/S04380110_Covered.bed
+
+
 # BASE_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing/2014/September1/"
 # BATCH="B2014September1_A2463"
 # BASE_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing/2014/September2/"
@@ -45,18 +46,37 @@ CAP_KIT=${PROJ_BASE}/Capture_Kits/Agilent_SureSelect_ExomeV5/S04380110_Covered.b
 # BATCH="B2016May"
 # BASE_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing/2016/June/"
 # BATCH="B2016June"
-# CAP_KIT=${PROJ_BASE}/Capture_Kits/Nextera_Rapid_Capture_Exome/nexterarapidcapture_exome_targetedregions.bed
+# BASE_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing/2016/August/"
+# BATCH="B2016August"
+BASE_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing/2016/October/"
+BATCH="B2016October"
+# BASE_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing/2017/January/"
+# BATCH="B2017January"
+CAP_KIT=${PROJ_BASE}/Capture_Kits/Nextera_Rapid_Capture_Exome/nexterarapidcapture_exome_targetedregions.bed
 
+
+
+# BASE_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing/2016/David/"
+# BATCH="David2016"
+# CAP_KIT=${PROJ_BASE}/Capture_Kits/Nextera_Rapid_Capture_Exome/nexterarapidcapture_exome_targetedregions.bed
 
 ##'-----------------------------------------------------------------------------------------#
 
 ##'Training/ Reference set variables from GATK bundle
 ##'-----------------------------------------------------------------------------------------#
-MILLS=${BUNDLE}/Mills_and_1000G_gold_standard.indels.hg19.vcf
-PHASE1INDELS=${BUNDLE}/1000G_phase1.indels.hg19.vcf
-PHASE1SNPS=${BUNDLE}/1000G_phase1.snps.high_confidence.hg19.vcf
-OMNI=${BUNDLE}/1000G_omni2.5.hg19.vcf
-HAPMAP=${BUNDLE}/hapmap_3.3.hg19.vcf
+# MILLS=${BUNDLE}/Mills_and_1000G_gold_standard.indels.b37.vcf
+# PHASE1INDELS=${BUNDLE}/1000G_phase1.indels.b37.vcf
+# PHASE1SNPS=${BUNDLE}/1000G_phase1.snps.high_confidence.b37.vcf
+# OMNI=${BUNDLE}/1000G_omni2.5.b37.vcf
+# HAPMAP=${BUNDLE}/hapmap_3.3.b37.vcf
+# DBSNP=${BUNDLE}/dbsnp_138.b37.vcf
+# DBSNPEX=${BUNDLE}/dbsnp_138.b37.excluding_sites_after_129.vcf
+# REF_FA=${BUNDLE}/human_g1k_v37_decoy.fasta
+MILLS=${BUNDLE}/Mills_and_1000G_gold_standard.indels.hg19.sites.vcf
+PHASE1INDELS=${BUNDLE}/1000G_phase1.indels.hg19.sites.vcf
+PHASE1SNPS=${BUNDLE}/1000G_phase1.snps.high_confidence.hg19.sites.vcf
+OMNI=${BUNDLE}/1000G_omni2.5.hg19.sites.vcf
+HAPMAP=${BUNDLE}/hapmap_3.3.hg19.sites.vcf
 DBSNP=${BUNDLE}/dbsnp_138.hg19.vcf
 DBSNPEX=${BUNDLE}/dbsnp_138.hg19.excluding_sites_after_129.vcf
 REF_FA=${BUNDLE}/ucsc.hg19.fasta
@@ -78,7 +98,7 @@ REVERSE_READS=`ls $i'/Raw_Data/'*R2*`
 REVERSE_READS=$(basename "$REVERSE_READS")
 # Nextera  NextSeq
 # Agilent_SureSelect_ExomeV5
-RG='@RG\tID:'${BATCH}'\tSM:'${SAMPLE_ID}'\tPL:Illumina\tLB:Agilent_SureSelect_ExomeV5\tPU:HISeq'
+RG='@RG\tID:'${BATCH}'\tSM:'${SAMPLE_ID}'\tPL:Illumina\tLB:Nextera\tPU:NextSeq'
 PADDING_TAR="${BASE_DIR}/Sample_${SAMPLE_ID}/Raw_Data/${SAMPLE_ID}_R1.fastq.gz"
 PADDING=$(zcat ${PADDING_TAR} | head -10000 | awk '{print length}' | sort -nr | head -1)
 ##'-----------------------------------------------------------------------------------------#
@@ -192,7 +212,7 @@ fi
 ##' $1 - Sample ID
 ##' $2 - Path to Sample's preprocessing base
 ##'---------------------------------------------------------------------------------------#
-if ! ls ${i}/Checks/${SAMPLE_ID}_Gender.cov 1> /dev/null 2>&1; then
+if ! ls ${i}/Checks/${SAMPLE_ID}_Gender_SRY.cov 1> /dev/null 2>&1; then
   qsub -N "GenderCov_${SAMPLE_ID}" \
           -hold_jid "GATKRecal_${SAMPLE_ID}" \
             ${SCRIPTS}/Modules/Module_GenderCov.sh \
