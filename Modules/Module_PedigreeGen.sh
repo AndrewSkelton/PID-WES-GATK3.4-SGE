@@ -83,6 +83,12 @@ do
   else
     SEX="2"
   fi
+
+  if [[ $PROBAN == *"0"* ]]; then
+    PROBAN="1"
+  else
+    PROBAN="2"
+  fi
   # echo "${SAM_ID}: ${SEX}"
 
   # echo $FAM_ID
