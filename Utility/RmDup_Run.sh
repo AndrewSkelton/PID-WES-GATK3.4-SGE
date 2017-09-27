@@ -1,6 +1,6 @@
 #!/bin/bash
 
-WORKING_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing"
+WORKING_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing/2017/2017_06_Manchester/"
 SCRIPTS="/home/nas151/WORKING_DATA/Exome_Project/Scripts/Utility"
 
 for i in `find $WORKING_DIR -type f -name "*Clean_GATK.bam"`

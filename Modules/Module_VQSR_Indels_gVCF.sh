@@ -14,7 +14,7 @@ module add apps/gatk/3.4-protected
 #  Study       : Exome Project                                                              |
 #  Data Owner  : Newcastle University - Prof. Sophie Hambleton                              |
 #  Type        : Cluster Script                                                             |
-#  Description : Run the Haplotype Caller on a family of sample, Call SNPs                  |
+#  Description : Run the VQSR on a raw callset, Indel specific                              |
 #  Version     : 1.0                                                                        |
 #  Input 1     : GATK Bundle Path                                                           |
 #  Input 2     : Raw Callset Folder                                                         |
@@ -33,7 +33,7 @@ module add apps/gatk/3.4-protected
 ##'Copy Files to Node's Local Scratch
 ##'-----------------------------------------------------------------------------------------#
 # cp ${2}/*.vcf* ${TMPDIR}
-cp ${7}/VQSR_SNPs.vcf* ${TMPDIR}
+cp ${7}/Raw_Callset.vcf* ${TMPDIR}
 cp ${1}/ucsc.hg19.fasta* ${TMPDIR}
 cp ${1}/ucsc.hg19.dict ${TMPDIR}
 cp ${3} ${TMPDIR}
@@ -65,7 +65,7 @@ java -Xmx25g -jar \
         -R ${TMPDIR}/"ucsc.hg19.fasta" \
         -L ${TMPDIR}/${CAP_KIT} \
         --interval_padding ${9} \
-        -input ${TMPDIR}/VQSR_SNPs.vcf \
+        -input ${TMPDIR}/Raw_Callset.vcf \
         -ped ${TMPDIR}/${PED} \
         -resource:mills,known=false,training=true,truth=true,prior=12.0 ${TMPDIR}/${MILLS} \
         -resource:dbsnp,known=true,training=false,truth=false,prior=2.0 ${TMPDIR}/${DBSNP} \
@@ -98,17 +98,30 @@ java -Xmx25g -jar \
         -T ApplyRecalibration \
         -nt 1 \
         -R ${TMPDIR}/"ucsc.hg19.fasta" \
-        -input ${TMPDIR}/VQSR_SNPs.vcf \
+        -input ${TMPDIR}/Raw_Callset.vcf \
         -recalFile ${TMPDIR}/VR_INDELs.recal \
         -tranchesFile ${TMPDIR}/VR_INDELs.tranches \
         -mode INDEL \
         --ts_filter_level 99.0 \
-        -o ${TMPDIR}/VQSR_Recalibrated.vcf
+        -o ${TMPDIR}/VQSR_Indels.vcf
+##'-----------------------------------------------------------------------------------------#
+
+
+
+##'Run GATK: Print Just INDELs
+##'-----------------------------------------------------------------------------------------#
+java -Xmx25g -jar \
+    ${GATK_ROOT}/GenomeAnalysisTK.jar \
+        -T SelectVariants \
+        -R ${TMPDIR}/"ucsc.hg19.fasta" \
+        -V ${TMPDIR}/VQSR_Indels.vcf \
+        -selectType INDEL \
+        -o ${TMPDIR}/VQSR_INDELs_Only.vcf
 ##'-----------------------------------------------------------------------------------------#
 
 
 
 ##'Move Callset to Lustre
 ##'-----------------------------------------------------------------------------------------#
-mv ${TMPDIR}/VQSR_Recalibrated.vcf* ${7}
+mv ${TMPDIR}/VQSR_INDELs_Only.vcf* ${7}/VQSR/
 ##'-----------------------------------------------------------------------------------------#

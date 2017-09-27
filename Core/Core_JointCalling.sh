@@ -18,7 +18,7 @@
 ##'-----------------------------------------------------------------------------------------#
 PROJ_BASE="/home/nas151/WORKING_DATA/Exome_Project/"
 BUNDLE="/opt/databases/GATK_bundle/2.8/hg19/"
-VERSION="2017JAN"
+VERSION="2017_08_03"
 BASE_DIR="${PROJ_BASE}/Preprocessing/"
 SCRIPTS=${PROJ_BASE}/Scripts
 DIR_OUT=${PROJ_BASE}/JointCalling/
@@ -65,7 +65,7 @@ do
     SAM_PATH_ARRAY+=(${SAM_PATH})
 
     PADDING_TAR="${SAM_PATH}/Raw_Data/${SAM_ID}_R1.fastq.gz"
-    PADDING_TMP=$(zcat ${PADDING_TAR} | head -5000 | awk '{print length}' | sort -nr | head -1)
+    PADDING_TMP=$(zcat ${PADDING_TAR} | head -1000 | awk '{print length}' | sort -nr | head -1)
     echo $PADDING_TMP
     if (( PADDING_MIN == 0 )); then
       PADDING_MIN=$PADDING_TMP
@@ -88,17 +88,16 @@ echo "Min Padding Dynamic Param: ${PADDING_MIN}"
 #  Input 2     : Paths In
 #  Input 3     : Output Directory
 #  Input 4     : Ped File
-#    -hold_jid '*gVCF*' \
 ##'-----------------------------------------------------------------------------------------#
-qsub -N "GATK_Joint_Calling_${VERSION}" \
-        ${SCRIPTS}/Modules/Module_Genotyping_gVCF.sh \
-        ${BUNDLE} \
-        ${DIR_OUT}/${VERSION}/Paths_in.txt \
-        ${DIR_OUT}/${VERSION}/Raw_Callset \
-        ${PROJ_BASE}Scripts/Ref/Samples.ped \
-        ${LOG} \
-        ${CAP_KIT} \
-        ${PADDING_MIN}
+ qsub -N "GATK_Joint_Calling_${VERSION}" \
+         ${SCRIPTS}/Modules/Module_Genotyping_gVCF.sh \
+         ${BUNDLE} \
+         ${DIR_OUT}/${VERSION}/Paths_in.txt \
+         ${DIR_OUT}/${VERSION}/Raw_Callset \
+         ${PROJ_BASE}Scripts/Ref/Samples.ped \
+         ${LOG} \
+         ${CAP_KIT} \
+         ${PADDING_MIN}
 ##'-----------------------------------------------------------------------------------------#
 
 
@@ -114,20 +113,20 @@ qsub -N "GATK_Joint_Calling_${VERSION}" \
 #  Input 8     : Training Set - HapMap
 #  Input 9     : VQSR Output Folder
 ##'-----------------------------------------------------------------------------------------#
-qsub -N "GATK_Joint_VQSR_SNP_${VERSION}" \
-   -hold_jid "GATK_Joint_Calling_${VERSION}" \
-       ${SCRIPTS}/Modules/Module_VQSR_SNP_gVCF.sh \
-       ${BUNDLE} \
-       ${DIR_OUT}/${VERSION}/Raw_Callset \
-       ${PROJ_BASE}Scripts/Ref/Samples.ped \
-       ${LOG} \
-       ${DBSNPEX} \
-       ${PHASE1SNPS} \
-       ${OMNI} \
-       ${HAPMAP} \
-       ${DIR_OUT}/${VERSION}/Raw_Callset/VQSR \
-       ${CAP_KIT} \
-       ${PADDING_MIN}
+ qsub -N "GATK_Joint_VQSR_SNP_${VERSION}" \
+    -hold_jid "GATK_Joint_Calling_${VERSION}" \
+        ${SCRIPTS}/Modules/Module_VQSR_SNP_gVCF.sh \
+        ${BUNDLE} \
+        ${DIR_OUT}/${VERSION}/Raw_Callset \
+        ${PROJ_BASE}Scripts/Ref/Samples.ped \
+        ${LOG} \
+        ${DBSNPEX} \
+        ${PHASE1SNPS} \
+        ${OMNI} \
+        ${HAPMAP} \
+        ${DIR_OUT}/${VERSION}/Raw_Callset/VQSR \
+        ${CAP_KIT} \
+        ${PADDING_MIN}
 ##'-----------------------------------------------------------------------------------------#
 
 
@@ -143,16 +142,32 @@ qsub -N "GATK_Joint_VQSR_SNP_${VERSION}" \
 #  Input 8     : Training Set - HapMap
 #  Input 9     : VQSR Output Folder
 ##'-----------------------------------------------------------------------------------------#
-qsub -N "GATK_Joint_VQSR_Indel_${VERSION}" \
-   -hold_jid "GATK_Joint_VQSR_SNP_${VERSION}" \
-       ${SCRIPTS}/Modules/Module_VQSR_Indels_gVCF.sh \
-       ${BUNDLE} \
-       ${DIR_OUT}/${VERSION}/Raw_Callset \
-       ${PROJ_BASE}Scripts/Ref/Samples.ped \
-       ${LOG} \
-       ${DBSNPEX} \
-       ${MILLS} \
-       ${DIR_OUT}/${VERSION}/Raw_Callset/VQSR \
-       ${CAP_KIT} \
-       ${PADDING_MIN}
+ qsub -N "GATK_Joint_VQSR_Indel_${VERSION}" \
+    -hold_jid "GATK_Joint_VQSR_SNP_${VERSION}" \
+        ${SCRIPTS}/Modules/Module_VQSR_Indels_gVCF.sh \
+        ${BUNDLE} \
+        ${DIR_OUT}/${VERSION}/Raw_Callset \
+        ${PROJ_BASE}Scripts/Ref/Samples.ped \
+        ${LOG} \
+        ${DBSNPEX} \
+        ${MILLS} \
+        ${DIR_OUT}/${VERSION}/Raw_Callset/ \
+        ${CAP_KIT} \
+        ${PADDING_MIN}
+##'-----------------------------------------------------------------------------------------#
+
+
+##'Run CombineVariants for VQSR callsets
+#  Input 1     : GATK Bundle Path
+#  Input 2     : Raw Callset Folder
+#  Input 3     : Ped File
+#  Input 4     : Output Folder
+##'-----------------------------------------------------------------------------------------#
+ qsub -N "GATK_Combine_${VERSION}" \
+    -hold_jid "GATK_Joint_VQSR_Indel_${VERSION}" \
+        ${SCRIPTS}/Modules/Module_CombineVariants.sh \
+        ${BUNDLE} \
+        ${DIR_OUT}/${VERSION}/Raw_Callset/VQSR \
+        ${PROJ_BASE}Scripts/Ref/Samples.ped \
+        ${DIR_OUT}/${VERSION}/Final_Callset
 ##'-----------------------------------------------------------------------------------------#

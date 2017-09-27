@@ -24,6 +24,8 @@ BUNDLE="/opt/databases/GATK_bundle/2.8/hg19/"
 # BATCH="Old_Samples"
 # CAP_KIT=${PROJ_BASE}/Capture_Kits/Agilent_SureSelect_ExomeV5/S04380110_Covered.bed
 
+# BASE_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing/Pre2013/Illumina_Truseq_62Mb/"
+# BATCH="Old_Illumina_Truseq_62mb"
 
 # BASE_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing/2015/December/"
 # BATCH="B2015December"
@@ -35,6 +37,9 @@ BUNDLE="/opt/databases/GATK_bundle/2.8/hg19/"
 # BATCH="B2014July_A1969_3"
 # CAP_KIT=${PROJ_BASE}/Capture_Kits/Agilent_SureSelect_ExomeV5/S04380110_Covered.bed
 
+
+# BASE_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing/Pre2013/Agilent_38Mb/"
+# BATCH="Old_Agilent_38Mb"
 
 # BASE_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing/2014/September1/"
 # BATCH="B2014September1_A2463"
@@ -48,11 +53,23 @@ BUNDLE="/opt/databases/GATK_bundle/2.8/hg19/"
 # BATCH="B2016June"
 # BASE_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing/2016/August/"
 # BATCH="B2016August"
-BASE_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing/2016/October/"
-BATCH="B2016October"
+# BASE_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing/2016/October/"
+# BATCH="B2016October"
 # BASE_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing/2017/January/"
 # BATCH="B2017January"
-CAP_KIT=${PROJ_BASE}/Capture_Kits/Nextera_Rapid_Capture_Exome/nexterarapidcapture_exome_targetedregions.bed
+# BASE_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing/2017/February/"
+# BATCH="B2017February"
+# BASE_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing/2017/March/"
+# BATCH="B2017March"
+#BASE_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing/2017/June/"
+#BATCH="B2017June"
+# BASE_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing/2017/July/"
+# BATCH="B2017July"
+# CAP_KIT=${PROJ_BASE}/Capture_Kits/Nextera_Rapid_Capture_Exome/nexterarapidcapture_exome_targetedregions.bed
+
+BASE_DIR="/home/nas151/WORKING_DATA/Exome_Project/Preprocessing/2017/2017_06_Manchester/"
+BATCH="M2017July"
+CAP_KIT=${PROJ_BASE}/Capture_Kits/Agilent_SureSelect_ExomeV5/S04380110_Covered.bed
 
 
 
@@ -96,9 +113,17 @@ FORWARD_READS=`ls $i'/Raw_Data/'*R1*`
 FORWARD_READS=$(basename "$FORWARD_READS")
 REVERSE_READS=`ls $i'/Raw_Data/'*R2*`
 REVERSE_READS=$(basename "$REVERSE_READS")
-# Nextera  NextSeq
+
 # Agilent_SureSelect_ExomeV5
+# RG='@RG\tID:'${BATCH}'\tSM:'${SAMPLE_ID}'\tPL:Illumina\tLB:Agilent_SureSelect_ExomeV5\tPU:HISeq'
+# Old_Sample
+# RG='@RG\tID:'${BATCH}'\tSM:'${SAMPLE_ID}'\tPL:Illumina\tLB:Agilent_SureSelect_ExomeV5\tPU:HiSeq'
+
+# Nextera  NextSeq
 RG='@RG\tID:'${BATCH}'\tSM:'${SAMPLE_ID}'\tPL:Illumina\tLB:Nextera\tPU:NextSeq'
+# Old_Sample
+# RG='@RG\tID:'${BATCH}'\tSM:'${SAMPLE_ID}'\tPL:Illumina\tLB:Nextera\tPU:HiSeq'
+
 PADDING_TAR="${BASE_DIR}/Sample_${SAMPLE_ID}/Raw_Data/${SAMPLE_ID}_R1.fastq.gz"
 PADDING=$(zcat ${PADDING_TAR} | head -10000 | awk '{print length}' | sort -nr | head -1)
 ##'-----------------------------------------------------------------------------------------#
@@ -197,6 +222,25 @@ if ! ls ${i}/GATK/${SAMPLE_ID}.g.vcf 1> /dev/null 2>&1; then
   qsub -N "GATKgVCF_${SAMPLE_ID}" \
           -hold_jid "GATKRecal_${SAMPLE_ID}" \
             ${SCRIPTS}/Modules/Module_GATKgVCF.sh \
+            ${SAMPLE_ID} \
+            ${i} \
+            ${REF_FA} \
+            ${BUNDLE} \
+            ${CAP_KIT} \
+            ${DBSNP} \
+            ${PADDING}
+fi
+##'---------------------------------------------------------------------------------------#
+
+
+##'Run GATK In gVCF Mode to get Haplotype Assembled Alignment
+##' $1 - Sample ID
+##' $2 - Path to Sample's preprocessing base
+##'---------------------------------------------------------------------------------------#
+if ! ls ${BASE_DIR}/Sample_${SAMPLE_ID}/Alignment/HaplotypeAssembled/${SAMPLE_ID}_HaplotypeAssembled.bam 1> /dev/null 2>&1; then
+  qsub -N "GATKgVCF_${SAMPLE_ID}" \
+          -hold_jid "GATKRecal_${SAMPLE_ID}" \
+            ${SCRIPTS}/Modules/Module_GATK_HaplotypeAssembledBam.sh \
             ${SAMPLE_ID} \
             ${i} \
             ${REF_FA} \

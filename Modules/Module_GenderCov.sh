@@ -18,14 +18,14 @@ source ~/.bash_profile
 #  Input       : Path to Sample's preprocessing base                                        |
 #  Input       : Capture Kit                                                                |
 #  Input       : SRY Target                                                                 |
-#  Resources   : Memory     - 5GB                                                           |
-#  Resources   : Processors - 5                                                             |
+#  Input       : Log File                                                                   |
+#  Resources   : Memory     - 10GB                                                           |
+#  Resources   : Processors - 1                                                             |
 #-------------------------------------------------------------------------------------------#
 
 
 ##'Add Modules
 ##'-----------------------------------------------------------------------------------------#
-# module add apps/bedtools/2.20.1
 module add apps/bedtools/2.25
 module add apps/samtools/1.3
 ##'-----------------------------------------------------------------------------------------#

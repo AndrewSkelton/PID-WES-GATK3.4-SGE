@@ -1,0 +1,39 @@
+*** New Run ***
+Removing Old Ped Files... Done.
+Creating Ped File... Done.
+Sample Missing: *WARNING* F0740
+Sample Missing: *WARNING* F151864
+Sample Missing: *WARNING* D151992
+Sample Missing: *WARNING* F07472
+Sample Missing: *WARNING* D123265
+Sample Missing: *WARNING* F08401
+Sample Missing: *WARNING* D144285
+Sample Missing: *WARNING* F05408
+Sample Missing: *WARNING* F10657
+Sample Missing: *WARNING* F10577
+Sample Missing: *WARNING* F08272
+Sample Missing: *WARNING* F05339
+Sample Missing: *WARNING* F07371
+Sample Missing: *WARNING* F05326
+Sample Missing: *WARNING* F05232
+Sample Missing: *WARNING* F07552
+Sample Missing: *WARNING* F06367
+Sample Missing: *WARNING* F13447
+Sample Missing: *WARNING* F11228
+Sample Missing: *WARNING* F05139
+Sample Missing: *WARNING* F98/468
+Sample Missing: *WARNING* F11430
+Sample Missing: *WARNING* NG016 is part of FAM20
+Pedigree Error: NG017 is part of FAM20, Paternal Sample: NG016 Not Found, setting to 0
+Sample Missing: *WARNING* NG026 is part of FAM23
+Pedigree Error: NG028 is part of FAM24, Paternal Sample: NG030 Not Found, setting to 0
+Pedigree Error: NG028 is part of FAM24, Maternal Sample: NG029 Not Found, setting to 0
+Sample Missing: *WARNING* NG029 is part of FAM24
+Sample Missing: *WARNING* NG030 is part of FAM24
+Pedigree Error: NG074 is part of FAM40, Paternal Sample: NG072 Not Found, setting to 0
+Pedigree Error: NG074 is part of FAM40, Maternal Sample: NG073 Not Found, setting to 0
+Sample Missing: *WARNING* NG072 is part of FAM40
+Sample Missing: *WARNING* NG073 is part of FAM40
+Sample Missing: *WARNING* NG083 is part of FAM42
+Sample Missing: *WARNING* NG084 is part of FAM42
+Pedigree Error: NG089 is part of FAM44, Maternal Sample: NG091 Not Found, setting to 0

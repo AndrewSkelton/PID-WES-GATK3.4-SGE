@@ -113,7 +113,20 @@ java -Xmx25g -jar \
 
 
 
+##'Run GATK: Print Just SNPs
+##'-----------------------------------------------------------------------------------------#
+java -Xmx25g -jar \
+    ${GATK_ROOT}/GenomeAnalysisTK.jar \
+        -T SelectVariants \
+        -R ${TMPDIR}/"ucsc.hg19.fasta" \
+        -V ${TMPDIR}/VQSR_SNPs.vcf \
+        -selectType SNP \
+        -o ${TMPDIR}/VQSR_SNPs_Only.vcf
+##'-----------------------------------------------------------------------------------------#
+
+
+
 ##'Move Callset to Lustre
 ##'-----------------------------------------------------------------------------------------#
-mv ${TMPDIR}/VQSR_SNPs.vcf* ${9}
+mv ${TMPDIR}/VQSR_SNPs_Only.vcf* ${9}
 ##'-----------------------------------------------------------------------------------------#

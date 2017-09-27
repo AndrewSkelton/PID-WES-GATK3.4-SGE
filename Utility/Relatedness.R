@@ -1,4 +1,10 @@
-foo <- read_tsv("/Volumes/andrew/Temp/Raw_Callset/out.relatedness2") %>% as.data.frame
+library(readr)
+library(dplyr)
+
+
+# foo <- read_tsv("/Volumes/andrew/2016Jun_WES_Karin/Recalibrated_Callset/out.relatedness") %>% as.data.frame
+# ped <- read_tsv("/Volumes/andrew/2016Jun_WES_Karin/pedigree/Samples.ped", col_names = F) %>% as.data.frame
+foo <- read_tsv("/Volumes/WORKING_DATA/Exome_Project/JointCalling/2016JULY/Raw_Callset/VQSR/out.relatedness") %>% as.data.frame
 ped <- read_tsv("/Volumes/WORKING_DATA/Exome_Project/Scripts/Ref/Samples.ped", col_names = F) %>% as.data.frame
 
 Output_Table <- c()
@@ -9,6 +15,7 @@ for(i in unique(ped$X1)) {
   
   foo_r  <- foo %>% filter(INDV1 %in% ped_in$X2, INDV2 %in% ped_in$X2)
   foo_nr <- foo %>% filter(!(INDV1 %in% ped_in$X2), !(INDV2 %in% ped_in$X2))
+  foo_cr <- foo %>% filter(INDV1 %in% ped_in$X2 | INDV2 %in% ped_in$X2)
   
   out <- c()
   for(j in 1:nrow(ped_in)) {
@@ -79,9 +86,11 @@ openxlsx::saveWorkbook(wb, "/Volumes/WORKING_DATA/Exome_Project/Preprocessing/Re
 
 
 
-
-
-
+ran_rel     <- foo %>% filter(INDV1 != INDV2, RELATEDNESS_AJK > 0.05)
+# wb          <- openxlsx::createWorkbook()
+# openxlsx::addWorksheet(wb, "Relatedness_Checks")
+# openxlsx::writeData(wb, "Relatedness_Checks", ran_rel)
+# openxlsx::saveWorkbook(wb, "/Volumes/BRC-Genomics/Sophie_Exomes/Andrew_Results/Karin_Tests/Relatedness_by_Score.xlsx", overwrite = T)
 
 
 foo <- read_tsv("/Volumes/andrew/2016Jun_WES_Karin/Recalibrated_Callset/out.relatedness2") %>% as.data.frame

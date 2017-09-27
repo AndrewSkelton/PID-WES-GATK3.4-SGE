@@ -1,0 +1,50 @@
+---
+title: "Alignment Path Prototyping"
+output: html_notebook
+---
+
+# Introduction
+Seqr requires paths to each sample for visualisation in IGVjs. This notebook is for prototyping the code to build three tab delimited files which link the sample to respective alignment location. Seqr stores alignments on a seperate share (//fs5-dbx.ncl.ac.uk/IGM_MRG-BSU)
+
+
+```{r load_libs}
+# sudo mount -t cifs -o username=nas151,vers=3.0 //fs5-dbx.ncl.ac.uk/IGM_MRG-BSU /mnt/MRG-BSU/
+library(tidyverse)
+```
+
+
+```{r import_data}
+pedigree.in     <- read_tsv("../../Bridge/Genotyping/Pedigree/master.ped", col_names = F)
+algn.root       <- "../../Bridge/Alignment/"
+algn.dedup.path <- "../../Bridge/Alignment/DeDup/"
+algn.haplo.path <- "../../Bridge/Alignment/HaplotypeAssembled/"
+algn.clean.path <- "../../Bridge/Alignment/Clean/"
+map.out.dir     <- "../../Bridge/Genotyping/Pedigree/"
+paths.in        <- c(algn.dedup.path, algn.haplo.path, algn.clean.path)
+
+
+```
+
+
+```{r make_maps}
+for(j in c("Bill", "Sophie")) {
+  if(j == "Bill") {
+    pedigree.subset <- pedigree.in %>% filter(grepl("B", X1))
+  } else {
+    pedigree.subset <- pedigree.in %>% filter(!grepl("B",X1))
+  }
+  
+  for(i in paths.in) {
+    files.available <- list.files(i, pattern = "*.bam$", recursive = T, full.names = T)
+    map.tmp         <- data.frame(Path = files.available, stringsAsFactors = F) %>% 
+                       mutate(sample = gsub("_.*","",basename(Path)),
+                              file   = basename(Path)) %>% 
+                       filter(sample %in% pedigree.subset$X2)
+    map.out         <- map.tmp %>% 
+                       dplyr::select(sample, Path) %>% 
+                       mutate(Path = gsub(algn.root,"",Path))
+    write_tsv(map.out, path = paste0(map.out.dir,j,"_SampleMap_",basename(i),".txt"), col_names = F)
+  }
+}
+```
+

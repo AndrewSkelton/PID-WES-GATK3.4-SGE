@@ -11,7 +11,6 @@ source ~/.bash_profile
 #  Author      : Andrew J Skelton                                                           |
 #  Language    : Bash                                                                       |
 #  Study       : Exome Project                                                              |
-#  Data Owner  : Newcastle University - Prof. Sophie Hambleton                              |
 #  Type        : Cluster Submission Script                                                  |
 #  Description : Use GATK to Gentotype and phase (If appropriate)                           |
 #  Input       : Sample ID                                                                  |
@@ -21,6 +20,7 @@ source ~/.bash_profile
 #  Input       : Capture Kit                                                                |
 #  Input       : Training Set - dbSNP                                                       |
 #  Input       : PADDING                                                                    |
+#  Input       : Log File                                                                   |
 #  Resources   : Memory     - 25GB                                                          |
 #  Resources   : Processors - 1                                                             |
 #-------------------------------------------------------------------------------------------#
@@ -31,20 +31,21 @@ source ~/.bash_profile
 module add apps/gatk/3.4-protected
 ##'-----------------------------------------------------------------------------------------#
 
+
 ##'Copy Files to Node
 ##'-----------------------------------------------------------------------------------------#
 cp ${2}/Alignment/Clean/${1}_Clean_GATK.ba* ${TMPDIR}
-cp ${3} ${TMPDIR}
-cp ${4}/ucsc.hg19.fasta* ${TMPDIR}
-cp ${4}/ucsc.hg19.dict ${TMPDIR}
+cp ${4}/human_g1k_v37.* ${TMPDIR}
 cp ${5} ${TMPDIR}
 cp ${6} ${TMPDIR}
 ##'-----------------------------------------------------------------------------------------#
+
 
 ##'Make Directory Structure
 ##'-----------------------------------------------------------------------------------------#
 mkdir -p ${2}/GATK
 ##'-----------------------------------------------------------------------------------------#
+
 
 ##'Get Reference Filenames
 ##'-----------------------------------------------------------------------------------------#
@@ -53,13 +54,14 @@ CAP_KIT=$(basename "$5")
 DBSNP=$(basename "$6")
 ##'-----------------------------------------------------------------------------------------#
 
-##' Family Based Haplotype Caller
+
+##' Haplotype Caller in gVCF mode
 ##'-----------------------------------------------------------------------------------------#
 java -Xmx18g -jar \
     ${GATK_ROOT}/GenomeAnalysisTK.jar \
         -T HaplotypeCaller \
         -nct 1 \
-        -R ${TMPDIR}/"ucsc.hg19.fasta" \
+        -R ${TMPDIR}/${REF_FA} \
         -I ${TMPDIR}/${1}'_Clean_GATK.bam' \
         -L ${TMPDIR}/${CAP_KIT} \
         --interval_padding ${7} \
@@ -74,13 +76,47 @@ java -Xmx18g -jar \
         -A VariantType \
         -A ClippingRankSumTest \
         -A DepthPerSampleHC \
-        --bamWriterType ALL_POSSIBLE_HAPLOTYPES \
-        --bamOutput ${TMPDIR}/${1}'_Clean_GATK_DeDup_AP.bam' \
         -o ${TMPDIR}/${1}'.g.vcf'
 ##'-----------------------------------------------------------------------------------------#
 
+
+##'Add to Log
+##'-----------------------------------------------------------------------------------------#
+if [ -f "${TMPDIR}/${1}.g.vcf" ]; then
+  echo $(date)" : ${1} gVCF File Generated" >> ${8}
+else
+  echo $(date)" : ${1} ERROR - gVCF Missing on Scratch" >> ${8}
+fi
+##'-----------------------------------------------------------------------------------------#
+
+
+##' Compress gVCF File
+##'-----------------------------------------------------------------------------------------#
+pigz -p 1 ${TMPDIR}/${1}'.g.vcf'
+##'-----------------------------------------------------------------------------------------#
+
+
+##'Add to Log
+##'-----------------------------------------------------------------------------------------#
+if [ -f "${TMPDIR}/${1}.g.vcf.gz" ]; then
+  echo $(date)" : ${1} gVCF File Compressed" >> ${8}
+else
+  echo $(date)" : ${1} ERROR - Compressed gVCF Missing on Scratch" >> ${8}
+fi
+##'-----------------------------------------------------------------------------------------#
+
+
 ##' Move VCF file back to Lustre
 ##'-----------------------------------------------------------------------------------------#
-mv ${TMPDIR}/${1}_Clean_GATK_DeDup* ${2}/Alignment/DeDup/
 mv ${TMPDIR}/${1}.g.vcf* ${2}/GATK/
+##'-----------------------------------------------------------------------------------------#
+
+
+##'Add to Log
+##'-----------------------------------------------------------------------------------------#
+if [ -f "${2}/GATK/${1}.g.vcf.gz" ]; then
+  echo $(date)" : ${1} Files Successfully moved to Cluster Storage" >> ${8}
+else
+  echo $(date)" : ${1} ERROR - gVCFs Missing on Cluster Filesystem" >> ${8}
+fi
 ##'-----------------------------------------------------------------------------------------#

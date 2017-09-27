@@ -1,0 +1,125 @@
+---
+title: "Pedigree Validate Prototyping"
+output: html_notebook
+---
+
+# Introduction
+Valid pedigree files are critical to genotype calling, as absent files will cause issues downstream, often resulting in the pedigree file being abandoned in software such as GATK. In this notebook, the pedigree file and gVCF parent directory will be inputs to generate a fully validated ped file that accounts for any missing samples. 
+
+
+```{r load_libs}
+library(tidyverse)
+library(kinship2)
+```
+
+
+```{r import_data}
+ped.in         <- read_tsv("/home/nas151/WORKING_DATA/DNA_Sequencing/Scripts/Ref/Pedigrees_in.txt") 
+gvcf.in        <- list.files("/home/nas151/WORKING_DATA/DNA_Sequencing/Bridge/gVCF/", recursive = T, full.names = T, pattern = ".gz")
+names(gvcf.in) <- basename(gvcf.in) %>% gsub(".g.vcf.gz","",.)
+```
+
+
+```{r Singleton_Validation}
+singlton.subset.out <- ped.in %>% 
+                       filter(grepl("SGL", Pipeline_ID)) %>% 
+                       filter(Sample_ID %in% names(gvcf.in))
+singlton.subset.err <- ped.in %>% 
+                       filter(grepl("SGL", Pipeline_ID)) %>% 
+                       filter(!(Sample_ID %in% names(gvcf.in)))
+singlton.subset.out; singlton.subset.err
+```
+
+
+
+```{r Family_Validation}
+family.subset.in    <- ped.in %>% 
+                       filter(grepl("FAM", Pipeline_ID)) %>% 
+                       filter(Sample_ID %in% names(gvcf.in))
+family.subset.err   <- ped.in %>% 
+                       filter(grepl("FAM", Pipeline_ID)) %>% 
+                       filter(!(Sample_ID %in% names(gvcf.in)))
+
+family.subset.out   <- family.subset.in
+for(i in 1:nrow(family.subset.out)) {
+  if(family.subset.out[i,]$Paternal_ID != 0) {
+    if(!family.subset.out[i,]$Paternal_ID %in% family.subset.out$Sample_ID) {
+      family.subset.out[i,]$Paternal_ID <- 0
+      message(paste0(family.subset.out[i,]$Pipeline_ID, " Missing Paternal Sample, set to 0"))
+    }
+  }
+  if(family.subset.out[i,]$Maternal_ID != 0) {
+    if(!family.subset.out[i,]$Maternal_ID %in% family.subset.out$Sample_ID) {
+      family.subset.out[i,]$Maternal_ID <- 0
+      message(paste0(family.subset.out[i,]$Pipeline_ID, " Missing Maternal Sample, set to 0"))
+    }
+  }
+}
+
+singletons.by.missing <- family.subset.out$Pipeline_ID %>% table %>% .[.==1] %>% names
+extra.singletons      <- family.subset.out %>% filter(Pipeline_ID %in% singletons.by.missing)
+family.subset.out     <- family.subset.out %>% filter(!(Pipeline_ID %in% singletons.by.missing))
+
+family.subset.in; family.subset.err; family.subset.out
+```
+
+
+
+```{r reset_orphans}
+sgl.marker <- singlton.subset.out$Pipeline_ID %>% gsub("^.*?SGL","",.) %>% as.numeric %>% max
+for(i in 1:nrow(extra.singletons)) {
+  extra.singletons$Pipeline_ID[i] <- paste0("SGLFIX", (sgl.marker + 1))
+  sgl.marker <- (sgl.marker + 1)
+}
+extra.singletons
+```
+
+
+```{r final_output}
+pedigrees.out <- extra.singletons %>% 
+                 dplyr::select(1,2,3,4,5,6) %>% 
+                 bind_rows({
+                   singlton.subset.out %>% 
+                   dplyr::select(1,2,3,4,5,6)
+                 }) %>% 
+                 bind_rows({
+                   family.subset.out %>% 
+                   dplyr::select(1,2,3,4,5,6)
+                 }) %>% 
+                 mutate(Gender = ifelse(Gender == "M", 1, Gender),
+                        Gender = ifelse(Gender == "F", 2, Gender))
+pedigrees.out
+
+pedigrees.err <- pedigrees.out %>% filter(!grepl("^1$|^2$", Gender))
+if(nrow(pedigrees.err) != 0) {
+  message(paste0("WARNING: ", nrow(pedigrees.err)," Unexpected Sex Value(s)"))
+}
+```
+
+
+```{r make_ped_image}
+single.founder <- family.subset.out %>% 
+                  filter(Paternal_ID != 0, Maternal_ID != 0) %>% 
+                  .$Pipeline_ID %>% unique
+ped.image.in   <- family.subset.out %>% 
+                  filter((Pipeline_ID %in% single.founder)) %>%
+                  mutate(Maternal_ID = ifelse(Maternal_ID == 0,NA,Maternal_ID),
+                         Paternal_ID = ifelse(Paternal_ID == 0,NA,Paternal_ID))
+
+pedAll         <- pedigree(id    = ped.image.in$Sample_ID, 
+                           dadid = ped.image.in$Paternal_ID, 
+                           momid = ped.image.in$Maternal_ID,
+                           sex   = ped.image.in$Gender, 
+                           famid = ped.image.in$Pipeline_ID,
+                           affected = ped.image.in$Affected,
+                           missid = 0)
+print(pedAll)
+ped1basic <- pedAll['FAM37']
+plot(ped1basic, main = "First Family")
+
+```
+
+
+
+
+

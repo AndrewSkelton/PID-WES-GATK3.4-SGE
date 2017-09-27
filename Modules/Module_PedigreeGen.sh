@@ -30,12 +30,19 @@ PED=${2}Samples.ped
 ##'-----------------------------------------------------------------------------------------#
 
 
+##' Add newline to EOF in pedigree file.
+##'-----------------------------------------------------------------------------------------#
+echo " " >> $PED
+##'-----------------------------------------------------------------------------------------#
+
+
 ##'Create Folder Structure and output File
 ##'-----------------------------------------------------------------------------------------#
 dos2unix ${2}SampleMap.txt
 mac2unix ${2}SampleMap.txt
 cp ${2}SampleMap.txt ${2}SampleMap_original.txt
 sed '1d' ${2}SampleMap.txt > ${2}/tmpfile; mv ${2}/tmpfile ${2}SampleMap.txt
+echo " " >> ${2}SampleMap.txt
 ##'-----------------------------------------------------------------------------------------#
 
 
@@ -84,11 +91,11 @@ do
     SEX="2"
   fi
 
-  if [[ $PROBAN == *"0"* ]]; then
-    PROBAN="1"
-  else
-    PROBAN="2"
-  fi
+  # if [[ $PROBAN == *"0"* ]]; then
+  #   PROBAN="1"
+  # else
+  #   PROBAN="2"
+  # fi
   # echo "${SAM_ID}: ${SEX}"
 
   # echo $FAM_ID
@@ -131,7 +138,7 @@ do
     fi
   fi
 
-  if [[ $FAM_ID == "SGL"* ]]; then
+  if [[ $FAM_ID != "FAM"* ]]; then
     query_list=`find ${1} -type f -name "${SAM_ID}.g.vcf" | wc -l`
     if (( query_list > 0 )); then
       echo -e "${FAM_ID}\t${SAM_ID}\t${PAT_ID}\t${MAT_ID}\t${SEX}\t${PROBAN}" >> ${PED}

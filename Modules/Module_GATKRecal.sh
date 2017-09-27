@@ -11,7 +11,6 @@ source ~/.bash_profile
 #  Author      : Andrew J Skelton                                                           |
 #  Language    : Bash                                                                       |
 #  Study       : Exome Project                                                              |
-#  Data Owner  : Newcastle University - Prof. Sophie Hambleton                              |
 #  Type        : Cluster Submission Script                                                  |
 #  Description : Use GATK to locally realign around Indels, and Recalibrate base quality    |
 #                scores                                                                     |
@@ -24,6 +23,7 @@ source ~/.bash_profile
 #  Input       : Capture Kit                                                                |
 #  Input       : GATK Bundle Path                                                           |
 #  Input       : PADDING                                                                    |
+#  Input       : Log File                                                                   |
 #  Resources   : Memory     - 30GB                                                          |
 #  Resources   : Processors - 5                                                             |
 #-------------------------------------------------------------------------------------------#
@@ -34,10 +34,11 @@ source ~/.bash_profile
 module add apps/gatk/3.4-protected
 ##'-----------------------------------------------------------------------------------------#
 
+
 ##'Copy Files to Node
 ##'-----------------------------------------------------------------------------------------#
 cp ${2}/Alignment/Clean/${1}*_Marked.* ${TMPDIR}
-cp ${8}/ucsc.hg19.dict ${TMPDIR}
+cp ${8}/human_g1k_v37.* ${TMPDIR}
 cp ${3} ${TMPDIR}
 cp ${4} ${TMPDIR}
 cp ${5} ${TMPDIR}
@@ -47,6 +48,7 @@ cp ${3}.* ${TMPDIR}
 ls ${TMPDIR}
 ##'-----------------------------------------------------------------------------------------#
 
+
 ##'Get Reference Filenames
 ##'-----------------------------------------------------------------------------------------#
 REF_FA=$(basename "$3")
@@ -55,6 +57,7 @@ PHASE1INDELS=$(basename "$5")
 DBSNP=$(basename "$6")
 CAP_KIT=$(basename "$7")
 ##'-----------------------------------------------------------------------------------------#
+
 
 ##' Find Indel Realignment Targets
 ##'-----------------------------------------------------------------------------------------#
@@ -69,7 +72,15 @@ java -Xmx25g -jar \
         -known ${TMPDIR}/${PHASE1INDELS} \
         -I ${TMPDIR}/${1}*_Marked.bam \
         -o ${TMPDIR}/realignment_targets.list
+# --fix_misencoded_quality_scores
 ##'-----------------------------------------------------------------------------------------#
+
+
+##'Add to Log
+##'-----------------------------------------------------------------------------------------#
+echo $(date)" : ${1} Realignment Target File Created" >> ${10}
+##'-----------------------------------------------------------------------------------------#
+
 
 ##' Apply Realignment
 ##'-----------------------------------------------------------------------------------------#
@@ -88,6 +99,13 @@ java -Xmx25g -jar \
         -o ${TMPDIR}/${1}_Realigned.bam
 ##'-----------------------------------------------------------------------------------------#
 
+
+##'Add to Log
+##'-----------------------------------------------------------------------------------------#
+echo $(date)" : ${1} Realignment Complete" >> ${10}
+##'-----------------------------------------------------------------------------------------#
+
+
 ##' BQSR
 ##'-----------------------------------------------------------------------------------------#
 java -Xmx25g -jar \
@@ -104,6 +122,13 @@ java -Xmx25g -jar \
         -o ${TMPDIR}/recal_data.table
 ##'-----------------------------------------------------------------------------------------#
 
+
+##'Add to Log
+##'-----------------------------------------------------------------------------------------#
+echo $(date)" : ${1} BQSR Training Complete" >> ${10}
+##'-----------------------------------------------------------------------------------------#
+
+
 ##' Apply Recalibrated Base Quality Scores
 ##'-----------------------------------------------------------------------------------------#
 java -Xmx25g -jar \
@@ -118,23 +143,30 @@ java -Xmx25g -jar \
         -o ${TMPDIR}/${1}_Clean_GATK.bam
 ##'-----------------------------------------------------------------------------------------#
 
+
+##'Add to Log
+##'-----------------------------------------------------------------------------------------#
+echo $(date)" : ${1} BQSR Applied to Alignment" >> ${10}
+##'-----------------------------------------------------------------------------------------#
+
+
 ##'Move Files back to Lustre
 ##'-----------------------------------------------------------------------------------------#
 mv ${TMPDIR}/${1}_Clean_GATK.* ${2}/Alignment/Clean
 ##'-----------------------------------------------------------------------------------------#
 
-##'If Clean Alignment is produced, Clean the directory of SAM files. Update Log
+
+##'Add to Log
 ##'-----------------------------------------------------------------------------------------#
 if [ -f "${2}/Alignment/Clean/${1}_Clean_GATK.bam" ]; then
-  echo $(date)" : GATK - Indel Realignment Targets Found" >> ${2}/${1}'.log'
-  echo $(date)" : GATK - Realignment Complete" >> ${2}/${1}'.log'
-  echo $(date)" : GATK - BQSR Calculated" >> ${2}/${1}'.log'
-  echo $(date)" : GATK - Base Quality Scores Recalibrated" >> ${2}/${1}'.log'
+  echo $(date)" : ${1} Clean BAM Moved to cluster storage from Node Scratch" >> ${10}
   rm ${2}/Alignment/Clean/*_Marked*
   rm ${2}/Alignment/Clean/*_metrics.txt
   rm -r ${2}/Alignment/Paired
   rm -r ${2}/Alignment/Unpaired
+  echo $(date)" : ${1} Redundent Directories Removed" >> ${10}
+  echo $(date)" : ${1} Alignment Prep Complete!" >> ${10}
 else
-  echo $(date)" : Error in GATK Procedure" >> ${2}/${1}'.log'
+  echo $(date)" : ${1} ERROR - Something went wrong" >> ${10}
 fi
 ##'-----------------------------------------------------------------------------------------#
